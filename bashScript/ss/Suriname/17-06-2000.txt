@@ -1,0 +1,5 @@
+2 EXIT HpgNpKLrXmzFN pYrYHMiyhtMki United_Arab_Emirates 10
+2 EXIT cadVGNkHDFXzD CJbrnvXlmHLjk France 104
+2 EXIT fTXgJpmaQheXZ bvuPSzWMKDYeb Israel 23
+2 ENTER SbEeWOGLXPrYr GhjNYSQrBjNGu Morocco 96
+2 ENTER PaprMEhDhDPCu cVoNLZherchPx Togo 72

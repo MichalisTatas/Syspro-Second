@@ -1,0 +1,5 @@
+2 ENTER jKiXzIPYQvqaK clnAMqdwUPcZm Luxembourg 30
+2 ENTER NXknfQerqrwiG MouSnMzEnYVxo El_Salvador 118
+2 ENTER TZnBlcPFzdZvf yeukrIrBQnEpS Mozambique 98
+2 EXIT yZfQybnAdejcu JROLQzKQemmYn Switzerland 108
+2 EXIT QBQJeYmDehyok qgVwJQDRavHgZ Bahrain 41

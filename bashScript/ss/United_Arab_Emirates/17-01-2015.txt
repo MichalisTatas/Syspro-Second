@@ -1,0 +1,5 @@
+2 ENTER ThgUCJhxNfnPj qhKtXpWvOXjyG Mexico 0
+2 ENTER xQIXEGNXLnlzY crCStPxzeZytZ Yemen 32
+2 ENTER TcdvWoJUKvEbn ZVqINKSwvVxrf Liberia 39
+2 EXIT qTtOFawhVrvsJ XupTXLFgCpkvE Dominican_Republic 17
+2 EXIT fKAogGwgQxNrF ajfwBdlxOgvbN Guinea_Bissau 46

@@ -1,0 +1,5 @@
+2 ENTER DqMYdgSYXCprg bbGanBxWjeGec United_States 60
+2 EXIT vvECmMgoCpFlu AwMrFknffKpHU China 47
+2 ENTER gaDtRLzdEUrYN BDtaIKiXfOBNy Kyrgyzstan 8
+2 EXIT qYcyJqQRlAIPy krPCPwSUnjads Luxembourg 44
+2 ENTER modVdEXThIdPf wYFVzNdQhFlBy Nigeria 7

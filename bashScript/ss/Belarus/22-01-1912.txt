@@ -1,0 +1,5 @@
+2 ENTER irPczbYGZJMTk qCclsTnDLCrDQ Barbados 42
+2 ENTER JmQBVYIFIsTPx qJnhyLyZUYxDu Tanzania 32
+2 EXIT nRSwTheBWxAGg kUlNlhvOPkgVb Poland 26
+2 ENTER UjleSJhqifjaR UYWGaPSnZTpDk Equatorial_Guinea 113
+2 ENTER yKylVCXqksjDL FDjgjoPUqZnsl Mauritius 1

@@ -1,0 +1,5 @@
+2 ENTER xWkcNuACPPpZR szlkKDOvJxzxS Liechtenstein 35
+2 EXIT DYSmisZgsjTcP inOIFzsgmXHZP Guinea 62
+2 EXIT MKGDPCLBZNRKr ovDrMJhsqEPQg Cyprus 61
+2 ENTER KVoKnmBxgKlWU OxioPxEwCSALD St_Lucia 75
+2 ENTER OuedIhdHEFtSI VuGsQBKZyUvNN El_Salvador 4

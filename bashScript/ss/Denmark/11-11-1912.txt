@@ -1,0 +1,5 @@
+2 EXIT xyQRAklGAiXxs pVuJyLDzqGPMi Lesotho 106
+2 ENTER ARWlvRlCZYZWM ZqzQzkTDzaohd Belarus 36
+2 ENTER LzdittUhRPkiO PKfLYtfmECmhL Barbados 64
+2 EXIT ZddZhfXcyXjdM MUXbEQiwdAozU Central_African_Rep 84
+2 ENTER qaaTLemnJfjMm pItZKcGrofewp Solomon_Islands 0

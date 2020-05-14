@@ -1,0 +1,5 @@
+2 ENTER YyQBZEuNJyadI bNXzpBByJbiAX Uzbekistan 1
+2 EXIT AwyDuTCwnNRDB SjcYVDmWFLxEI Gabon 99
+2 EXIT gwMQYHbpAWJVX tARPCvmjLKQiW Dominican_Republic 22
+2 ENTER sOePGcokqveFu fjBsizxMZbJaM Ukraine 15
+2 ENTER tHAeQEjGgJhCQ ZoIARMEsCrNSY Chile 83

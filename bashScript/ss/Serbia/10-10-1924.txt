@@ -1,0 +1,5 @@
+2 ENTER uIbdLpRVAwjMa qnWnmEvqedpcp Equatorial_Guinea 48
+2 ENTER eSnkUiAQlHvCu lTNuDwIxkISFf Vatican_City 12
+2 EXIT BRYNBPujcHIKo fRzASwztlqwkL Iceland 50
+2 ENTER rVkAtFLFonoGe mEuVhgyaydWJN Portugal 119
+2 ENTER jwyYlkkVQDBmI SDejXzPlZfOrC Germany 51

@@ -1,0 +1,5 @@
+2 ENTER gMDOUOBnIdqfV uQopSHaXWxUfS Sao_Tome_Principe 0
+2 EXIT MZDLVkUKFxYvk fmhJdAflFnjvx Burkina 100
+2 ENTER OCVxcTvSKbhhu enimyQuXBLsar Dominican_Republic 10
+2 ENTER oOOntpijKQtyt GLvmvpnHTmDAm Mongolia 30
+2 EXIT ciDDkSnVFllab HjHcOlAlUJjAf United_Kingdom 74

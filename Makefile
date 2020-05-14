@@ -12,7 +12,7 @@ EXECUTABLE = diseaseMonitor
 _DEPS = 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = 
+_OBJ = main.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
@@ -24,10 +24,10 @@ $(EXECUTABLE): $(OBJ)
 .PHONY: clean run valgrind
 
 run:
-	./$(EXECUTABLE)
+	./$(EXECUTABLE) -w 5 -b 5 -i input
 
 valgrind:
-	valgrind --leak-check=full ./$(EXECUTABLE)
+	valgrind --leak-check=full ./$(EXECUTABLE) -w 5 -b 5 -i input
 
 clean:
 	rm -f $(ODIR)/*.o

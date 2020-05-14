@@ -1,0 +1,5 @@
+2 ENTER ZWQMEMhTQNoZH sBYVWVEsicvDw Cameroon 39
+2 ENTER rTqHYFwLbGjaP QjlYLilnxttOc South_Africa 78
+2 ENTER rUywxFqlvNcdN fKMDiMtDNPaGv Latvia 59
+2 EXIT FIQhiyWZVfvtt LxgBUTQnCEaOk Zimbabwe 101
+2 EXIT bPwLzQtSzhkrc BLwtsfZalaZYa Uruguay 100
