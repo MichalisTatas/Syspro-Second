@@ -1,5 +1,0 @@
-2 ENTER xWGIkXeRvCqMH zIZMxkbYEBtNd Mauritania 44
-2 EXIT aKqWJBWVAQsra avTYgAUlEkzJI Poland 65
-2 ENTER lotOerhjULyKm yBRuqhUYbTvqt Gabon 116
-2 EXIT uPIgDLzGHCdLO UqcpmZHAgxWps Antigua_Deps 114
-2 ENTER dUaRPAlRXOHHH eewqpGJmHCFkc Korea_South 11
