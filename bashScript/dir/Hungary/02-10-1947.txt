@@ -1,0 +1,5 @@
+2 EXIT yLxuFUegdHFVj KlezQVsFCpGan Gambia 31
+2 EXIT aubydUMkgGqdK ZMbqLKTAylWcn United_Kingdom 13
+2 ENTER EaybYvmKaACUn AhXzrWaavShDX Australia 103
+2 ENTER DpvCCBbKVvcyz eEeDFrAVTZkZI Burundi 84
+2 ENTER ITMzeIZdbUOPy fKLEahSqklgLu United_Kingdom 58

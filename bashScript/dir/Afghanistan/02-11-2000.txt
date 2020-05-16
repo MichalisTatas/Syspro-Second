@@ -1,0 +1,5 @@
+2 EXIT SsCAhXnwWmVFr uLcHVJArsRvGy Zambia 57
+2 ENTER OEjyHmKJbIeEX EtBXfKRJRpjMb Korea_North 0
+2 ENTER NkwwHJSnNYAaw XhbNBrfzZGQwC Netherlands 110
+2 ENTER UflKEvrAjttFM DEquzJAbAQSUo Central_African_Rep 107
+2 EXIT XjoWMwbCnkYQg hfWFJcHgCmETL Cambodia 101

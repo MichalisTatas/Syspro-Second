@@ -1,0 +1,5 @@
+2 ENTER dluIqwEKsKfvZ YibVxxVraCuim Cyprus 102
+2 ENTER HQDRqkXRPehOq RCOUcgIEBitbo Greece 10
+2 EXIT mRzPaVomCUGPe bLnHOhszFguMs Trinidad_Tobago 27
+2 EXIT LHrKsbWmELqID csfimJYoilVTm Niger 5
+2 EXIT uoCHwjRzeMmua pCsAWcZDCZpuy Vatican_City 79

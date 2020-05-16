@@ -1,0 +1,5 @@
+2 ENTER RegQPGRcVRbDt BzOeqUATkpkqj Ethiopia 71
+2 ENTER bgpSqblccAudm FVOMcxrIOfgrc Denmark 58
+2 EXIT eiFUnULSVrIYa NgwtErrmXZXIg Vatican_City 44
+2 EXIT XxPfAmJhvrzmF lsZGOnomgoxMZ Sweden 80
+2 ENTER QmzKmTSJLHlYQ KhIRBeRXasPWo New_Zealand 38

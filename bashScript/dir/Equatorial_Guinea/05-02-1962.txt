@@ -1,0 +1,5 @@
+2 ENTER DyfJQjmymKPla qokWVGqMDTXLH France 96
+2 ENTER eCvteSWBATWBg HYsrsDOxFyAUU Israel 111
+2 ENTER FYgTqBTsuCLQB NeRaVlXaqPqoG Luxembourg 99
+2 ENTER VMuFnhKNLmmro rLivOcIybOHHd Thailand 0
+2 EXIT RrUuCVPCszwZg COVSmaphsGYgk Iceland 96

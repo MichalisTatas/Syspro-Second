@@ -1,0 +1,5 @@
+2 EXIT EQeosJwrlXVSF pKOJwDWeRNEDp Ecuador 40
+2 ENTER jRsXAqtnXsmVq mcxVjAjETXdlJ New_Zealand 66
+2 ENTER VkHmPBkaGABwl jevoqgpxPWFrY Finland 76
+2 EXIT SqkRuxLcKRpmv EkiVKIfezJHXH Norway 103
+2 ENTER XqoKgmvDSDrVQ CtrVkWlWsEwuT Belgium 100

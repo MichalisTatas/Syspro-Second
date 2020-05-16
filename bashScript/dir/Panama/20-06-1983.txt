@@ -1,0 +1,5 @@
+2 ENTER kZWjbrQMpEfWd ENfaZEmfbHYdD United_Kingdom 36
+2 ENTER oVDIHYNjdayyI PasfpMBIoGhDY Romania 9
+2 EXIT DxMSrUoCGoMdO edxFIXFfDgvUQ Dominican_Republic 101
+2 EXIT QUTWyLfGIWiZR DVRGzYwbsdXxb New_Zealand 23
+2 ENTER zBHmshHSsnprq hkinGggJNnYkP Korea_North 32

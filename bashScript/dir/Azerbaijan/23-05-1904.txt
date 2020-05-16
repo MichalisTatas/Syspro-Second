@@ -1,0 +1,5 @@
+2 ENTER bKLeauGwXdXiq dTegyvfTKAika East_Timor 23
+2 ENTER TrRejdnGtMSFk ZHmvdProjnVza Niger 93
+2 EXIT nHMHbmKQxByKg iZUDHJFCWTEkD United_Kingdom 0
+2 ENTER eGAASCWQlJsNL WxFslUgjRIQam Nepal 60
+2 EXIT RIQNlVSPqqyOe JWUZexpaFpxIS Vanuatu 20

@@ -1,0 +1,5 @@
+2 ENTER uYGrZaKcTNWLv EXYQnQodjlAbo Palau 104
+2 ENTER ssCKPmXwUmkRE ZrdfOwXxBpuxP Luxembourg 80
+2 ENTER IgnJSVkEhuRng IRbJqxcoiBuYo Costa_Rica 35
+2 EXIT xxshnqgiPYsmU UTYJceVGbAKza France 81
+2 EXIT JOBMfriKDsGZu EazJtZluzTfxY Cyprus 55
