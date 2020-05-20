@@ -3,6 +3,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include "../include/pipes.h"
 
 int main(int argc, char* argv[])
 {
@@ -37,21 +41,41 @@ int main(int argc, char* argv[])
         }
     }
 
-    DIR* countriesDir;
+    // DIR* countriesDir;
 
-    if ((countriesDir = opendir("bashScript/dir")) == NULL) {
-        perror("opendir");
-        return -1;
+    // if ((countriesDir = opendir("bashScript/dir")) == NULL) {
+    //     perror("opendir");
+    //     return -1;
+    // }
+
+    // struct dirent* d;
+    // int counter=0;
+    // while ((d = readdir(countriesDir)) != NULL) {
+    //     if ( !strcmp(d->d_name, ".") || !strcmp(d->d_name, "..") )
+    //         continue;
+    //     counter++;
+    // }
+
+    pid_t pid;
+    for (int i=0; i<numWorkers; i++) {\
+        pid = fork();
+        if (pid == -1) {
+            perror("fork failed!\n");
+            return -1;
+        }
+        if (pid == 0)
+            break;
     }
 
-    struct dirent* d;
-    int counter=0;
-    while ((d = readdir(countriesDir)) != NULL) {
-        if ( !strcmp(d->d_name, ".") || !strcmp(d->d_name, "..") )
-            continue;
-        counter++;
+    if (pid != 0) {
+        printf("i am in parent process ie disease aggregator! \n");
     }
-    printf("%d \n", counter);
+    else {
+        if (createPipe("pipes/", getpid()) == -1) {
+            printf("error in createPipe! \n");
+            return -1;
+        }
+    }
 
     free(input_dir);
     return 0;

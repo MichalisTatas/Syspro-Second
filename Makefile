@@ -6,13 +6,14 @@ BDIR = bin
 ODIR = build
 IDIR = include
 SDIR = source
+PDIR = pipes
 
 EXECUTABLE = diseaseMonitor
 
-_DEPS = 
+_DEPS = pipes.h diseaseAggregator.h workers.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o
+_OBJ = main.o pipes.o workers.o diseaseAggregator.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
@@ -32,3 +33,4 @@ valgrind:
 clean:
 	rm -f $(ODIR)/*.o
 	rm -f $(BDIR)/$(EXECUTABLE)
+	rm -rf $(PDIR)/*

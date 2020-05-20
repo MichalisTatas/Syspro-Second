@@ -1,0 +1,1 @@
+-check permissions at mkfifo in createPipes 
