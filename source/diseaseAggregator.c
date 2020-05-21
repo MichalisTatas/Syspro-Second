@@ -66,7 +66,14 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
             continue;
 
         if (iterator->read == -1 || iterator->write == -1) {
-            
+            if ((iterator->read = openPipe("pipes/", iterator->pid, O_WRONLY,"P2C")) == -1) {  //P2C parent writes to child
+                printf("Error creating pipe! \n");
+                return -1;
+            }
+            if ((iterator->write = openPipe("pipes/", iterator->pid, O_RDONLY,"C2P")) == -1) {  //C2P child writes to parent
+                printf("Error creating pipe! \n");
+                return -1;
+            }
         }
 
         if (iterator->countriesArray != NULL) {
@@ -88,16 +95,6 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
         iterator = iterator->next;
         if (iterator == NULL)
             iterator = workersList;
-    }
-
-    workerInfoPtr iterator1 = workersList;
-    while(iterator1!=NULL){
-        for(int i=0; i<number; i++) {
-            if(iterator1->countriesArray[i] != NULL)
-                printf("%s ->", iterator1->countriesArray[i]);
-        }
-        printf("\n\n\n");
-        iterator1=iterator1->next;
     }
 
     if (closedir(countriesDir) == -1) {

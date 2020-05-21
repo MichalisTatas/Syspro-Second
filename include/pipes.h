@@ -6,3 +6,4 @@
 #pragma once
 
 int createPipe(char*, int, int, char*);
+int openPipe(char*, int, int, char*);
