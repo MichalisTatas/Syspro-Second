@@ -8,12 +8,12 @@ IDIR = include
 SDIR = source
 PDIR = pipes
 
-EXECUTABLE = diseaseMonitor
+EXECUTABLE = diseaseAggregator
 
-_DEPS = pipes.h diseaseAggregator.h workers.h
+_DEPS = pipes.h diseaseAggregator.h workers.h dataStructures.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o pipes.o workers.o diseaseAggregator.o
+_OBJ = main.o pipes.o workers.o diseaseAggregator.o dataStructures.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
@@ -25,12 +25,12 @@ $(EXECUTABLE): $(OBJ)
 .PHONY: clean run valgrind
 
 run:
-	./$(EXECUTABLE) -w 5 -b 5 -i input
+	./$(EXECUTABLE) -w 20 -b 20 -i input
 
 valgrind:
-	valgrind --leak-check=full ./$(EXECUTABLE) -w 5 -b 5 -i input
+	valgrind --leak-check=full ./$(EXECUTABLE) -w 20 -b 20 -i input
 
 clean:
 	rm -f $(ODIR)/*.o
-	rm -f $(BDIR)/$(EXECUTABLE)
+	rm diseaseAggregator
 	rm -rf $(PDIR)/*

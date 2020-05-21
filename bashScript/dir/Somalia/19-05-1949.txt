@@ -1,5 +1,0 @@
-2 ENTER jmxgOzdKXQlVa INZFYPiJZbMWS Vatican_City 6
-2 ENTER knntgklEXKpBZ yfoVMoijBryqf United_Kingdom 100
-2 ENTER ykTubZYKIAJgO sDnMxEVKeKQpx Malta 107
-2 EXIT mGzHArdiaCmBZ DhvsgVwFMShaB Iceland 18
-2 ENTER iQwMguJctmTch XzslnZAnqbVVw Denmark 37

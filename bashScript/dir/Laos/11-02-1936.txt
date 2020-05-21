@@ -1,5 +1,0 @@
-2 ENTER JbXZNHrxbYqbg LrJztFvugQnNO San_Marino 77
-2 ENTER USTNzjQzRdUBb iJzAJlAaISuJk Greece 63
-2 EXIT PvAqMwgyvyCcT emKlIsDMMVpcT Italy 62
-2 EXIT lEixwlwCgJfuH LUllMjoPdWRjX Antigua_Deps 55
-2 EXIT aJloitWFFOoyu MgCTbyUnnWOXW Panama 12

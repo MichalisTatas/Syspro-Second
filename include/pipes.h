@@ -5,4 +5,4 @@
 #include <sys/stat.h>
 #pragma once
 
-int createPipe(char*, int);
+int createPipe(char*, int, int, char*);
