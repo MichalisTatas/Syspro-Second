@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g3 -Wall
+CFLAGS = -g3 -Wall -Wextra
 LDFLAGS = 
 
 BDIR = bin
@@ -25,10 +25,10 @@ $(EXECUTABLE): $(OBJ)
 .PHONY: clean run valgrind
 
 run:
-	./$(EXECUTABLE) -w 20 -b 20 -i input
+	./$(EXECUTABLE) -w 4 -b 20 -i ./bashScript/dir
 
 valgrind:
-	valgrind --leak-check=full ./$(EXECUTABLE) -w 20 -b 20 -i input
+	valgrind --leak-check=full --show-leak-kinds=all ./$(EXECUTABLE) -w 4 -b 20 -i ./bashScript/dir
 
 clean:
 	rm -f $(ODIR)/*.o

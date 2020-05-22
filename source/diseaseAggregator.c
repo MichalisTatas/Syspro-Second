@@ -17,26 +17,26 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
             perror("fork failed!\n");
             return -1;
         }
-        else if (pid == 0)
-            break;
+        else if (pid == 0) {
+            if (workersFunction() == -1) {   //maybe use exec to do this
+                printf("Error in workers Function\n");
+                return -1;
+            }
+            free(inputDirectory);
+            destroyList(workersList, numWorkers, countriesNum);
+            exit(0);
+        }
         else
             workersList = addPidInList(workersList, pid);
     }
 
-    if (pid != 0) {
-        if (diseaseAggregatorApp(workersList, numWorkers, countriesNum) == -1) {
-            printf("Error occurred in diseaseAggregatorApp!\n");
-            return -1;
-        }
+    if (diseaseAggregatorApp(workersList, numWorkers, countriesNum) == -1) {
+        printf("Error occurred in diseaseAggregatorApp!\n");
+        return -1;
     }
-    else {
-        if (workersFunction(getpid()) == -1) {   //maybe use exec to do this
-            printf("Error in workers Function\n");
-            return -1;
-        }
-    }
-
-    destroyList(workersList);
+    
+    for (int i=0; i<numWorkers; i++)
+        wait(NULL);    
     return 0;
 }
 
@@ -53,44 +53,24 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
 
     
     workerInfoPtr iterator = workersList;
-    int number = 0;
-    if (countriesNum % numWorkers == 0)
-        number = countriesNum / numWorkers;
-    else 
-        number = countriesNum / numWorkers +1 ;
-
-    // in this while i distribute the countries to each child open the pipes
+    // // in this while i distribute the countries to each child open the pipes
     while ((d = readdir(countriesDir)) != NULL) {
 
         if ( !strcmp(d->d_name, ".") || !strcmp(d->d_name, "..") )
             continue;
 
         if (iterator->read == -1 || iterator->write == -1) {
-            if ((iterator->read = openPipe("pipes/", iterator->pid, O_WRONLY,"P2C")) == -1) {  //P2C parent writes to child
-                printf("Error creating pipe! \n");
+            if ((iterator->write = createPipe("pipes/", iterator->pid, O_WRONLY,"P2C")) == -1) {  //P2C parent writes to child
+                printf("Error opening or creating pipe! \n");
                 return -1;
             }
-            if ((iterator->write = openPipe("pipes/", iterator->pid, O_RDONLY,"C2P")) == -1) {  //C2P child writes to parent
-                printf("Error creating pipe! \n");
+            if ((iterator->read = createPipe("pipes/", iterator->pid, O_RDONLY,"C2P")) == -1) {  //C2P child writes to parent
+                printf("Error opening or creating pipe! \n");
                 return -1;
             }
         }
 
-        if (iterator->countriesArray != NULL) {
-            for (int i=0; i<number; i++) {
-                if (iterator->countriesArray[i] == NULL) {
-                    iterator->countriesArray[i] = malloc(strlen(d->d_name) + 1);
-                    strcpy(iterator->countriesArray[i], d->d_name);
-                    break;
-                }
-            }
-        }
-        else
-        {
-            initializeArray(iterator, number);
-            iterator->countriesArray[0] = malloc(strlen(d->d_name) + 1);
-            strcpy(iterator->countriesArray[0], d->d_name);
-        }
+        addCountryInList(iterator, d->d_name);
 
         iterator = iterator->next;
         if (iterator == NULL)
@@ -105,14 +85,8 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
     //while(true){
     //     read write
     // }
+    destroyList(workersList, numWorkers, countriesNum);
     return 0;
-}
-
-void initializeArray(workerInfoPtr node, int number)
-{
-    node->countriesArray = malloc(number*sizeof(char*));
-    for (int i=0; i<number; i++)
-        node->countriesArray[i] = NULL;
 }
 
 int countriesNumber(char* countriesDirName)
@@ -122,7 +96,7 @@ int countriesNumber(char* countriesDirName)
     struct dirent* d;
     int counter=0;
 
-    if ((countriesDir = opendir("bashScript/dir")) == NULL) {
+    if ((countriesDir = opendir(countriesDirName)) == NULL) {
         perror("opendir");
         return -1;
     }

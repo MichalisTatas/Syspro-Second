@@ -1,29 +1,40 @@
 #include "../include/workers.h"
 
-int workersFunction(int pid)
+volatile sig_atomic_t handlerNumber;
+
+static void handler(int sig)
 {
+    handlerNumber = sig;
+    printf("lalla \n");
+}
 
-    // 0666 or?>??
+int workersFunction()
+{
+    int pid = getpid();
     int readDesc, writeDesc;
-    if (createPipe("pipes/", pid, 0666,"P2C") == -1) {  //P2C parent writes to child
-        printf("Error creating pipe! \n");
+    if ((readDesc = createPipe("pipes/", pid, O_RDONLY,"P2C")) == -1) {  //P2C parent writes to child
+        printf("Error opening or creating pipe! \n");
         return -1;
     }
-    if (createPipe("pipes/", pid, 0666,"C2P") == -1) {  //C2P child writes to parent
-        printf("Error creating pipe! \n");
-        return -1;
-    }
-    if ((readDesc = openPipe("pipes/", pid, O_RDONLY,"P2C")) == -1) {  //P2C parent writes to child
-        printf("Error creating pipe! \n");
-        return -1;
-    }
-    if ((writeDesc = openPipe("pipes/", pid, O_WRONLY,"C2P")) == -1) {  //C2P child writes to parent
-        printf("Error creating pipe! \n");
+    if ((writeDesc = createPipe("pipes/", pid, O_WRONLY,"C2P")) == -1) {  //C2P child writes to parent
+        printf("Error opening or creating pipe! \n");
         return -1;
     }
 
-    // while (true) {
-    //     //try to read bro i guess
-    // }
+    // signal(SIGUSR1, handler);
+    struct sigaction sa;
+    sa.sa_flags = SA_SIGINFO;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = (void*)handler;
+    while (1) {
+        if ((sigaction(SIGUSR1, &sa, NULL) == -1) || (sigaction(SIGQUIT, &sa, NULL) == -1) || (sigaction(SIGINT, &sa, NULL) == -1)) {
+            perror("sigaction failed!");
+            return -1;
+        }
+        
+        printf("d\n");
+        sleep(4);
+    }
+    // printf("ATTATAT\n");
     return 0;
 }

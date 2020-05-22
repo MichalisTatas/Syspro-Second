@@ -13,5 +13,4 @@
 
 int diseaseAggregatorFunction(int, int, char*);
 int diseaseAggregatorApp(workerInfoPtr, int, int);
-void initializeArray(workerInfoPtr, int);
 int countriesNumber(char*);
