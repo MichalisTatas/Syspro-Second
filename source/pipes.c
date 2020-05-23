@@ -42,3 +42,41 @@ int createPipe(char* path, int pid, int flags, char* ending)
     free(pipeName);
     return fileDesc;
 }
+
+void msgDecomposer(int fileDescriptor, char* msg, int bufferSize)
+{
+    int repetitions;
+    int msgLength = strlen(msg);
+
+    char numBuff[12];
+    sprintf(numBuff, "%d", msg);
+    if (12 % bufferSize == 0)
+        repetitions = 12 / bufferSize;
+    else
+        repetitions = 12 / bufferSize + 1;
+
+    for (int i=0; i<repetitions; i++) {
+        write(fileDescriptor,  numBuff + i*repetitions, bufferSize);
+    }
+
+
+    if ((msgLength % bufferSize) == 0)
+        repetitions = msgLength / bufferSize;
+    else 
+        repetitions = msgLength / bufferSize + 1;
+
+    for (int i=0; i<repetitions; i++) {
+        write(fileDescriptor, msg + i*bufferSize , bufferSize);
+    }
+}
+
+// char* msgComposer(int fileDescriptor, char* msg, int bufferSize)
+// {
+    
+// }
+
+
+
+
+
+

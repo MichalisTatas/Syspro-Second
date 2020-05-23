@@ -23,8 +23,8 @@ int workersFunction()
 
     // signal(SIGUSR1, handler);
     struct sigaction sa;
-    sa.sa_flags = SA_SIGINFO;
-    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_SIGINFO;           // prob not needed
+    sigemptyset(&sa.sa_mask);           // prob not needed
     sa.sa_sigaction = (void*)handler;
     while (1) {
         if ((sigaction(SIGUSR1, &sa, NULL) == -1) || (sigaction(SIGQUIT, &sa, NULL) == -1) || (sigaction(SIGINT, &sa, NULL) == -1)) {
