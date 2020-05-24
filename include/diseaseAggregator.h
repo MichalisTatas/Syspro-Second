@@ -12,5 +12,5 @@
 #include "dataStructures.h"
 
 int diseaseAggregatorFunction(int, int, char*);
-int diseaseAggregatorApp(workerInfoPtr, int, int);
+int diseaseAggregatorApp(workerInfoPtr, int, int, int);
 int countriesNumber(char*);

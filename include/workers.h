@@ -9,4 +9,4 @@
 #include <signal.h>
 
 
-int workersFunction();
+int workersFunction(int);

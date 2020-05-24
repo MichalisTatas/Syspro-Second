@@ -18,7 +18,7 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
             return -1;
         }
         else if (pid == 0) {
-            if (workersFunction() == -1) {   //maybe use exec to do this
+            if (workersFunction(bufferSize) == -1) {   //maybe use exec to do this
                 printf("Error in workers Function\n");
                 return -1;
             }
@@ -30,7 +30,7 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
             workersList = addPidInList(workersList, pid);
     }
 
-    if (diseaseAggregatorApp(workersList, numWorkers, countriesNum) == -1) {
+    if (diseaseAggregatorApp(workersList, numWorkers, countriesNum, bufferSize) == -1) {
         printf("Error occurred in diseaseAggregatorApp!\n");
         return -1;
     }
@@ -40,7 +40,7 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
     return 0;
 }
 
-int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countriesNum)
+int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countriesNum, int bufferSize)
 {
     //open all the pipes and store countries in list and sent countries to workers
     DIR* countriesDir;
@@ -82,9 +82,11 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
         return -1;
     }
 
-    //while(true){
-    //     read write
-    // }
+    iterator = workersList;
+
+    while(true){
+        msgDecomposer(iterator->write, "hello mike i am the working pipe that you made i just decomposed and composed back this messagfe for you becauze it is really easy with this new function you just finished ty bro!", bufferSize);
+    }
     destroyList(workersList, numWorkers, countriesNum);
     return 0;
 }

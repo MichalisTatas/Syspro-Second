@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -7,4 +8,4 @@
 
 int createPipe(char*, int, int, char*);
 void msgDecomposer(int, char*, int);
-char* msgComposer(int, char*, int);
+char* msgComposer(int, int);

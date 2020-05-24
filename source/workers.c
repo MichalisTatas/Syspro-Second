@@ -8,7 +8,7 @@ static void handler(int sig)
     printf("lalla \n");
 }
 
-int workersFunction()
+int workersFunction(int bufferSize)
 {
     int pid = getpid();
     int readDesc, writeDesc;
@@ -21,18 +21,20 @@ int workersFunction()
         return -1;
     }
 
-    // signal(SIGUSR1, handler);
+    signal(SIGUSR1, handler);
     struct sigaction sa;
     sa.sa_flags = SA_SIGINFO;           // prob not needed
     sigemptyset(&sa.sa_mask);           // prob not needed
     sa.sa_sigaction = (void*)handler;
+    char* msg;
     while (1) {
         if ((sigaction(SIGUSR1, &sa, NULL) == -1) || (sigaction(SIGQUIT, &sa, NULL) == -1) || (sigaction(SIGINT, &sa, NULL) == -1)) {
             perror("sigaction failed!");
             return -1;
         }
         
-        printf("d\n");
+        msg = msgComposer(readDesc, bufferSize);
+        printf("%s\n", msg);
         sleep(4);
     }
     // printf("ATTATAT\n");
