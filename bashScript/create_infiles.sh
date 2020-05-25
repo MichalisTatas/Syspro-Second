@@ -15,6 +15,7 @@ while IFS= read -r line
 do
     fileCounter=0
     mkdir -p $3/$line
+    echo "TATAS"
     while [ $fileCounter -lt $4 ]
     do
         #generate random day and turn it in DD form if needed

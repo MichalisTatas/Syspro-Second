@@ -12,6 +12,8 @@ int workersFunction(int bufferSize)
 {
     int pid = getpid();
     int readDesc, writeDesc;
+    countryPtr countryList = NULL;
+
     if ((readDesc = createPipe("pipes/", pid, O_RDONLY,"P2C")) == -1) {  //P2C parent writes to child
         printf("Error opening or creating pipe! \n");
         return -1;
@@ -27,16 +29,24 @@ int workersFunction(int bufferSize)
     sigemptyset(&sa.sa_mask);           // prob not needed
     sa.sa_sigaction = (void*)handler;
     char* msg;
-    while (1) {
+
+    while(true) {
+
         if ((sigaction(SIGUSR1, &sa, NULL) == -1) || (sigaction(SIGQUIT, &sa, NULL) == -1) || (sigaction(SIGINT, &sa, NULL) == -1)) {
             perror("sigaction failed!");
             return -1;
         }
-        
-        msg = msgComposer(readDesc, bufferSize);
-        printf("%s\n", msg);
-        sleep(4);
+
+        if (!strcmp((msg = msgComposer(readDesc, bufferSize)), "finished writing countries")) {
+            free(msg);
+            break;
+        }
+        else {
+            printf("%s %d\n", msg, getpid());
+            free(msg);
+        }
     }
-    // printf("ATTATAT\n");
+    msgDecomposer(writeDesc, "finished!", bufferSize);
+
     return 0;
 }

@@ -37,7 +37,6 @@ int main(int argc, char* argv[])
         }
     }
 
-
     if (diseaseAggregatorFunction(bufferSize, numWorkers, input_dir) == -1) {
         printf("Error occured in diseaseAggregatorFunction!\n");
         return -1;

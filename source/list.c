@@ -1,4 +1,4 @@
-#include "../include/dataStructures.h"
+#include "../include/list.h"
 
 workerInfoPtr addPidInList(workerInfoPtr head, int pid)
 {
@@ -7,6 +7,7 @@ workerInfoPtr addPidInList(workerInfoPtr head, int pid)
     temp->pid = pid;
     temp->read = -1;
     temp->write = -1;
+    temp->readyForWork = false;
     temp->countriesList = NULL;
     temp->next = NULL;
 

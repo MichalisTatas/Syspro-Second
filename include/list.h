@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#pragma once
 
 typedef struct country {
     char* name;
@@ -13,6 +15,7 @@ typedef struct workerInfo
     int pid;
     int read;
     int write;
+    bool readyForWork;
     countryPtr countriesList;
     struct workerInfo* next;
 } workerInfo;

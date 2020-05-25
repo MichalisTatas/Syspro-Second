@@ -46,16 +46,14 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
     DIR* countriesDir;
     struct dirent* d;
 
-    if ((countriesDir = opendir("bashScript/dir")) == NULL) {
+    if ((countriesDir = opendir("./bashScript/dir")) == NULL) {
         perror("opendir");
         return -1;
     }
 
-    
     workerInfoPtr iterator = workersList;
     // // in this while i distribute the countries to each child open the pipes
     while ((d = readdir(countriesDir)) != NULL) {
-
         if ( !strcmp(d->d_name, ".") || !strcmp(d->d_name, "..") )
             continue;
 
@@ -70,6 +68,8 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
             }
         }
 
+        msgDecomposer(iterator->write, d->d_name, bufferSize);
+
         addCountryInList(iterator, d->d_name);
 
         iterator = iterator->next;
@@ -77,16 +77,66 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
             iterator = workersList;
     }
 
+    iterator = workersList;
+    for (int i=0; i<numWorkers; i++) {
+        msgDecomposer(iterator->write, "finished writing countries", bufferSize);
+        iterator = iterator->next;
+    }
+
     if (closedir(countriesDir) == -1) {
         perror("closedir failed!");
         return -1;
     }
 
-    iterator = workersList;
+    fd_set readfds;
+    size_t len = 0;
+    char* line = NULL;
+    char* msg;
 
-    while(true){
-        msgDecomposer(iterator->write, "hello mike i am the working pipe that you made i just decomposed and composed back this messagfe for you becauze it is really easy with this new function you just finished ty bro!", bufferSize);
+    // makes sure every worker finishes reading and storing data
+    // before taking queries from user
+
+    while(true) {
+        // parent read process from workers
+        FD_ZERO(&readfds);
+        iterator = workersList;
+        int max = 0;
+        while (iterator != NULL) {
+            FD_SET(iterator->read, &readfds);
+            if (iterator->read > max)
+                max = iterator->read;
+            iterator = iterator->next;
+        }
+
+        if (pselect(max + 1, &readfds, NULL, NULL, NULL, NULL) == -1) {
+            perror("pselect failed!");
+            return -1;
+        }
+
+        iterator = workersList;
+        while (iterator != NULL) {
+            if (FD_ISSET(iterator->read, &readfds)) {
+                msg = msgComposer(iterator->read, bufferSize);
+                if (!strcmp(msg, "finished!")) {
+                    iterator->readyForWork = true;
+                    printf("epa8e trikimia %s \n", msg);
+                    free(msg);
+                }
+            }
+            iterator = iterator->next;
+        }
+
+        iterator = workersList;
+        bool allReady=true;
+        while (iterator != NULL) {
+            if (iterator->readyForWork == false)
+                allReady = false;
+            iterator = iterator->next;
+        }
+        if (allReady)
+            break;
     }
+
     destroyList(workersList, numWorkers, countriesNum);
     return 0;
 }

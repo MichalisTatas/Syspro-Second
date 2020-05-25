@@ -10,10 +10,10 @@ PDIR = pipes
 
 EXECUTABLE = diseaseAggregator
 
-_DEPS = pipes.h diseaseAggregator.h workers.h dataStructures.h
+_DEPS = pipes.h diseaseAggregator.h workers.h list.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o pipes.o workers.o diseaseAggregator.o dataStructures.o
+_OBJ = main.o pipes.o workers.o diseaseAggregator.o list.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)

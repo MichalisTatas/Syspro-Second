@@ -23,8 +23,6 @@ int createPipe(char* path, int pid, int flags, char* ending)
     strcpy(pipeName, path);
     strcat(pipeName, ending);
     strcat(pipeName, buffer);
-    
-    printf("%s \n\n",pipeName);
 
     if (mkfifo(pipeName, 0666) == -1) {
         if (errno != EEXIST) {    
@@ -45,65 +43,58 @@ int createPipe(char* path, int pid, int flags, char* ending)
 
 void msgDecomposer(int fileDescriptor, char* msg, int bufferSize)
 {
-    int repetitions;
-    int msgSize = strlen(msg) + 1;
+    int msgSize = strlen(msg)+1;
     char numBuff[12] = {0};
     sprintf(numBuff, "%d", msgSize);
- 
-    if (12 % bufferSize == 0)
-        repetitions = 12 / bufferSize;
-    else
-        repetitions = 12 / bufferSize + 1;
-
-    for (int i=0; i<repetitions; i++) {
-        write(fileDescriptor,  numBuff + i*repetitions, bufferSize);
+    
+    for (int i=0; i<12/bufferSize; i++) {
+        write(fileDescriptor,  numBuff + i*bufferSize, bufferSize);
     }
 
+    if (12 % bufferSize)
+        write(fileDescriptor, numBuff + (12 - 12 % bufferSize), bufferSize);
 
-    if ((msgSize % bufferSize) == 0)
-        repetitions = msgSize / bufferSize;
-    else 
-        repetitions = msgSize / bufferSize + 1;
-
-    for (int i=0; i<repetitions; i++) {
+    for (int i=0; i<msgSize/bufferSize; i++)
         write(fileDescriptor, msg + i*bufferSize , bufferSize);
-    }
+
+    if (msgSize % bufferSize)
+        write(fileDescriptor, msg + ( msgSize - msgSize % bufferSize) , bufferSize);
+
 }
 
 char* msgComposer(int fileDescriptor, int bufferSize)
 {
-    int repetitions;
     char msgSizeArray[12] = {0};
     char* buffer[bufferSize];
     char* msg;
 
-    if (12 % bufferSize == 0)
-        repetitions = 12 / bufferSize;
-    else
-        repetitions = 12 / bufferSize + 1;
-
-    for (int i=0; i<repetitions; i++) {
+    for (int i=0; i<12/bufferSize; i++) {
         read(fileDescriptor, buffer, bufferSize);
         memcpy(msgSizeArray + i*bufferSize, buffer, bufferSize); //bufferSize?
     }
 
+    if ((12 % bufferSize)) {
+        read(fileDescriptor, buffer, bufferSize);
+        memcpy(msgSizeArray + bufferSize * (12 / bufferSize), buffer, 12 - bufferSize * (12 / bufferSize));
+    }
+
     int msgSize = strtol(msgSizeArray, NULL, 10);
 
-    printf("msgSize %d\n", msgSize);
+    // printf("msgSize %d\n", msgSize);
 
-    if ((msg = malloc(msgSize)) == NULL) {
+    if ((msg = malloc(msgSize)) == NULL) {      // +1 ???
         perror("malloc failed!");
         return NULL;
     }
 
-    if ((msgSize % bufferSize) == 0)
-        repetitions = msgSize / bufferSize;
-    else 
-        repetitions = msgSize / bufferSize + 1;
-
-    for (int i=0; i<repetitions; i++) {
+    for (int i=0; i<msgSize/bufferSize; i++) {
         read(fileDescriptor, buffer, bufferSize);
         memcpy(msg + i*bufferSize, buffer, bufferSize);
+    }
+
+    if (msgSize % bufferSize) {
+        read(fileDescriptor, buffer, bufferSize);
+        memcpy(msg + bufferSize*(msgSize / bufferSize), buffer, msgSize - bufferSize*(msgSize / bufferSize));
     }
 
     return msg;
