@@ -23,14 +23,14 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
                 return -1;
             }
             free(inputDirectory);
-            destroyList(workersList, numWorkers, countriesNum);
+            destroyList(workersList);
             exit(0);
         }
         else
             workersList = addPidInList(workersList, pid);
     }
 
-    if (diseaseAggregatorApp(workersList, numWorkers, countriesNum, bufferSize) == -1) {
+    if (diseaseAggregatorApp(workersList, numWorkers, bufferSize) == -1) {
         printf("Error occurred in diseaseAggregatorApp!\n");
         return -1;
     }
@@ -40,7 +40,7 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
     return 0;
 }
 
-int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countriesNum, int bufferSize)
+int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSize)
 {
     //open all the pipes and store countries in list and sent countries to workers
     DIR* countriesDir;
@@ -68,9 +68,9 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
             }
         }
 
-        msgDecomposer(iterator->write, d->d_name, bufferSize);
+        // msgDecomposer(iterator->write, d->d_name, bufferSize);
 
-        addCountryInList(iterator, d->d_name);
+        addCountryInList(&iterator->countriesList, d->d_name);
 
         iterator = iterator->next;
         if (iterator == NULL)
@@ -89,8 +89,6 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
     }
 
     fd_set readfds;
-    size_t len = 0;
-    char* line = NULL;
     char* msg;
 
     // makes sure every worker finishes reading and storing data
@@ -137,7 +135,7 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int countrie
             break;
     }
 
-    destroyList(workersList, numWorkers, countriesNum);
+    destroyList(workersList);
     return 0;
 }
 

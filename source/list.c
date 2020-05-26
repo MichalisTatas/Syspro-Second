@@ -22,7 +22,7 @@ workerInfoPtr addPidInList(workerInfoPtr head, int pid)
     return head;
 }
 
-void addCountryInList(workerInfoPtr head, char* countryName)
+void addCountryInList(countryPtr* head, char* countryName)
 {
     countryPtr cntry = malloc(sizeof(country));
     if ((cntry->name = malloc(strlen(countryName) + 1)) == NULL) {
@@ -31,16 +31,9 @@ void addCountryInList(workerInfoPtr head, char* countryName)
     }
     strcpy(cntry->name, countryName);
 
-    if (head->countriesList == NULL) {
-        cntry->next = NULL;
-        head->countriesList = cntry;
-    }
-    else {
-        cntry->next = head->countriesList;
-        head->countriesList = cntry;    
-    }
+    cntry->next = *head;
+    *head = cntry;
 }
-
 
 void destroyCountryList(countryPtr head)
 {
@@ -51,11 +44,11 @@ void destroyCountryList(countryPtr head)
     free(head);
 }
 
-void destroyList(workerInfoPtr head, int workers, int countries)
+void destroyList(workerInfoPtr head)
 {
     if (head == NULL)
         return;
-    destroyList(head->next, workers, countries);
+    destroyList(head->next);
     destroyCountryList(head->countriesList);
     free(head);
 }

@@ -42,10 +42,20 @@ int workersFunction(int bufferSize)
             break;
         }
         else {
-            printf("%s %d\n", msg, getpid());
+            addCountryInList(&countryList, msg);
             free(msg);
         }
     }
+
+    if (countryList == NULL)
+        printf("WTF!\n");
+    countryPtr t = countryList;
+    while(t != NULL){
+        printf("%s --> ", t->name);
+        t=t->next;
+    }
+
+    destroyCountryList(countryList);
     msgDecomposer(writeDesc, "finished!", bufferSize);
 
     return 0;

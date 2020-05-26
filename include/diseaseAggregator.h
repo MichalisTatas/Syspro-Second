@@ -14,5 +14,5 @@
 #include "list.h"
 
 int diseaseAggregatorFunction(int, int, char*);
-int diseaseAggregatorApp(workerInfoPtr, int, int, int);
+int diseaseAggregatorApp(workerInfoPtr, int, int);
 int countriesNumber(char*);

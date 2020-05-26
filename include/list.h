@@ -23,5 +23,6 @@ typedef struct workerInfo
 typedef workerInfo* workerInfoPtr;
 
 workerInfoPtr addPidInList(workerInfoPtr, int);
-void addCountryInList(workerInfoPtr, char*);
-void destroyList(workerInfoPtr, int, int);
+void addCountryInList(countryPtr*, char*);
+void destroyCountryList(countryPtr);
+void destroyList(workerInfoPtr);
