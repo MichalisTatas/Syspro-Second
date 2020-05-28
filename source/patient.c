@@ -18,13 +18,15 @@ datePtr createDate(const char* line)
         perror("malloc failed");
         return NULL;
     }
-    temp = strtok(temp, "-");
+    
+    strtok(temp, "-");
     dt->day = atoi(temp);
-    temp = strtok(NULL, "-");
+    strtok(NULL, "-");
     dt->month = atoi(temp);
-    temp = strtok(NULL, "");
+    strtok(NULL, "");
     dt->year = atoi(temp);
-    // free(temp);
+
+    free(temp);
     return dt;
 }
 

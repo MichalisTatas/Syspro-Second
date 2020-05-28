@@ -5,6 +5,7 @@
 ******************IMPORTANT CHANGE BASHSCRIPT*******************
 need to change bashscripot dir and use path for the function and not hardcoded ../bashScript/dir
 
+xanw mia xwra sto bash script
 
 Done :
 	-created processes

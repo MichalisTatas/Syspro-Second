@@ -29,9 +29,8 @@ int main(int argc, char* argv[])
         }
         else if (!strcmp(argv[i], "-i")) {
             if ((input_dir = malloc(strlen(argv[i+1]) + 1)) == NULL) {
-                printf("Malloc failed to allocate space!\n");
+                perror("malloc failed");
                 return -1;
-                //perror??
             }
             strcpy(input_dir, argv[i+1]);
         }

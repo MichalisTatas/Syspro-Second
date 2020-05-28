@@ -2,8 +2,6 @@
 
 volatile sig_atomic_t handlerNumber;
 
-#define bucketSize 24
-
 static void handler(int sig)
 {
     handlerNumber = sig;
@@ -49,16 +47,16 @@ int workersFunction(int bufferSize)
         }
     }
 
-    HashTablePtr diseaseHashtable = HTCreate(10, bucketSize);
-    HashTablePtr countryHashtable = HTCreate(10, bucketSize);
+    HashTablePtr diseaseHashtable = HTCreate(10);
+    HashTablePtr countryHashtable = HTCreate(10);
 
     if (setDataStructures(&diseaseHashtable, &countryHashtable, countryList) == -1) {
         perror("setDataStructures");
         return -1;
     }
 
-    HTPrint(diseaseHashtable);
-    HTPrint(countryHashtable);
+    // HTPrint(diseaseHashtable);
+    // HTPrint(countryHashtable);
 
     //finished filling data structures ready for queries
     msgDecomposer(writeDesc, "finished!", bufferSize);
@@ -123,10 +121,9 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
                     perror("createPatientStruct failed");
                     return -1;
                 }
-                destroyPatientList(currentPatient);
-                // patientListHead = patientListInsert(patientListHead, currentPatient);
+                patientListHead = patientListInsert(patientListHead, currentPatient);
                 HTInsert(*diseaseHashtable, currentPatient->diseaseID, currentPatient);
-                // HTInsert(*countryHashtable, currentPatient->country, currentPatient);
+                HTInsert(*countryHashtable, currentPatient->country, currentPatient);
             }
             
             if (fclose(filePtr) == EOF) {
@@ -136,7 +133,6 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
             free(datePath);
             date = date->next;
         }
-
         if (closedir(countryDir) == -1) {
             perror("closedir failed!");
             return -1;
@@ -148,7 +144,7 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
         country = country->next;
     }
 
-    // destroyPatientList(patientListHead);
+    destroyPatientList(patientListHead);
     free(line);
     return 0;
 }
