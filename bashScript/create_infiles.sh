@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # diseasesFile $1
 # countriesFile $2
 # input_dir $3
@@ -44,7 +46,7 @@ do
 
             #create the entry
             entry=$id" "$state" "$(head /dev/urandom | tr -dc A-Za-z | head -c 13)" "$(head /dev/urandom | tr -dc A-Za-z | head -c 13)" "$(shuf -n 1 $input)" "$((RANDOM % 120 ))
-            echo $entry >> $3/$line/$date.txt
+            echo $entry >> $3/$line/$date
             ((entryCounter++))
         done
         ((fileCounter++))

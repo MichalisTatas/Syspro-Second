@@ -22,6 +22,12 @@ workerInfoPtr addPidInList(workerInfoPtr head, int pid)
     return head;
 }
 
+// countryPtr addDateAndSort(countryPtr head, char* date)
+// {
+//     datePtr toBeInserted = createDate(date);
+
+// }
+
 void addCountryInList(countryPtr* head, char* countryName)
 {
     countryPtr cntry = malloc(sizeof(country));

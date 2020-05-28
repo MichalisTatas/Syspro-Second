@@ -10,6 +10,8 @@
 #include <signal.h>
 
 #include "list.h"
+#include "hashTable.h"
 
 
 int workersFunction(int);
+int setDataStructures(HashTablePtr*,HashTablePtr*,countryPtr);

@@ -4,17 +4,30 @@
 #include <string.h>
 #include <wordexp.h>
 
-datePtr createDate(char* line)
+datePtr createDate(const char* line)
 {
-    datePtr dt = malloc(sizeof(date));
-    line = strtok(line, "-");
-    dt->day = atoi(line);
-    line = strtok(NULL, "-");
-    dt->month = atoi(line);
-    line = strtok(NULL, " ");
-    dt->year = atoi(line);
+    char* temp;
+    if ((temp = malloc(strlen(line) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    strcpy(temp, line);
+
+    datePtr dt;
+    if ((dt = malloc(sizeof(date))) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    temp = strtok(temp, "-");
+    dt->day = atoi(temp);
+    temp = strtok(NULL, "-");
+    dt->month = atoi(temp);
+    temp = strtok(NULL, "");
+    dt->year = atoi(temp);
+    // free(temp);
     return dt;
 }
+
 
 void replaceExitDate(patientPtr head, char* recordID, char* dt)
 {
@@ -89,32 +102,66 @@ patientPtr patientListInsert(patientPtr head, patientPtr current)
     return head;
 }
 
-patientPtr createPatientStruct(char* line)
+patientPtr createPatientStruct(const char* line, char* country, char* date)
 {
 
+    // FOR PATIENT WITH EXIT CREATE NEW FUNCITON SINCE ITS NOT TOGETHER LIKE PREVIOUS EXERCISE
+    char* data = malloc(strlen(line) + 1);
+    strcpy(data, line);
     wordexp_t p;
-    wordexp(line, &p, 0);
+    wordexp(data, &p, 0);
     patientPtr current = malloc(sizeof(patient));
 
-    current->recordID = malloc(strlen(p.we_wordv[0]) + 1);
+    if ((current->recordID = malloc(strlen(p.we_wordv[0]) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
     strcpy(current->recordID, p.we_wordv[0]);
 
-    current->patientFirstName = malloc(strlen(p.we_wordv[1]) + 1);
-    strcpy(current->patientFirstName, p.we_wordv[1]);
-    
-    current->patientLastName = malloc(strlen(p.we_wordv[2]) + 1);
-    strcpy(current->patientLastName, p.we_wordv[2]);
-    
-    current->diseaseID = malloc(strlen(p.we_wordv[3]) + 1);
-    strcpy(current->diseaseID, p.we_wordv[3]);
-    
-    current->country = malloc(strlen(p.we_wordv[4]) + 1);
-    strcpy(current->country, p.we_wordv[4]);
+    if ((current->action = malloc(strlen(p.we_wordv[1]) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    strcpy(current->action, p.we_wordv[1]);
 
-    current->entryDate = createDate(p.we_wordv[5]);
-    current->exitDate = createDate(p.we_wordv[6]);
+    if ((current->patientFirstName = malloc(strlen(p.we_wordv[2]) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    strcpy(current->patientFirstName, p.we_wordv[2]);
+    
+    if ((current->patientLastName = malloc(strlen(p.we_wordv[3]) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    strcpy(current->patientLastName, p.we_wordv[3]);
+    
+    if ((current->diseaseID = malloc(strlen(p.we_wordv[4]) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    strcpy(current->diseaseID, p.we_wordv[4]);
+    
+    current->age = atoi(p.we_wordv[5]);
+
+    if ((current->country = malloc(strlen(country) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    strcpy(current->country, country);
+
+    if ((current->entryDate = createDate(date)) == NULL) {
+        perror("creating date failed");
+        return NULL;
+    }
+
+    // printf ("%d %d %d \n", current->entryDate->day, current->entryDate->month, current->entryDate->year);
+
+    current->exitDate = NULL;
+
     current->next = NULL;
     wordfree(&p);
+    free(data);
     return current;
 }
 
@@ -126,6 +173,7 @@ void destroyPatientList(patientPtr patient)
     free(patient->recordID);
     free(patient->country);
     free(patient->diseaseID);
+    free(patient->action);
     free(patient->entryDate);
     free(patient->exitDate);
     free(patient->patientFirstName);

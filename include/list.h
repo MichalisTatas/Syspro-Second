@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #pragma once
 
+#include "patient.h"
+
 typedef struct country {
     char* name;
     struct country* next;
@@ -24,5 +26,6 @@ typedef workerInfo* workerInfoPtr;
 
 workerInfoPtr addPidInList(workerInfoPtr, int);
 void addCountryInList(countryPtr*, char*);
+countryPtr addDateAndSort(countryPtr, char*);
 void destroyCountryList(countryPtr);
 void destroyList(workerInfoPtr);

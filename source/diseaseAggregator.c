@@ -68,7 +68,8 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
             }
         }
 
-        // msgDecomposer(iterator->write, d->d_name, bufferSize);
+                     //check it out sto countries list exw mia parapanw grammi gia to script pou den tou areseio edw profanwes
+        msgDecomposer(iterator->write, d->d_name, bufferSize);
 
         addCountryInList(&iterator->countriesList, d->d_name);
 
@@ -134,6 +135,8 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
         if (allReady)
             break;
     }
+
+    // start taking queries as input 
 
     destroyList(workersList);
     return 0;
