@@ -8,7 +8,7 @@ static void handler(int sig)
     printf("lalla \n");
 }
 
-int workersFunction(int bufferSize)
+int workersFunction(int bufferSize, char* inputDirectory)
 {
     int pid = getpid();
     int readDesc, writeDesc;
@@ -65,13 +65,13 @@ int workersFunction(int bufferSize)
         return -1;
     }
 
-    if (setDataStructures(&diseaseHashtable, &countryHashtable, countryList) == -1) {
+    if (setDataStructures(&diseaseHashtable, &countryHashtable, countryList, inputDirectory) == -1) {
         perror("setDataStructures");
         return -1;
     }
 
-    // HTPrint(diseaseHashtable);
-    // HTPrint(countryHashtable);
+    HTPrint(diseaseHashtable);
+    HTPrint(countryHashtable);
 
     //finished filling data structures ready for queries
     if (msgDecomposer(writeDesc, "finished!", bufferSize) == -1) {
@@ -85,12 +85,11 @@ int workersFunction(int bufferSize)
     return 0;
 }
 
-int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashtable,countryPtr countryList)
+int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashtable,countryPtr countryList, char* inputDirectory)
 {
     // open each country file and fill the needed data structures
     DIR* countryDir;
     struct dirent* d;
-    char* path = "./bashScript/dir/";
     countryPtr country = countryList;
     FILE* filePtr;
     char* countryPath;
@@ -102,12 +101,12 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
 
     while (country != NULL) {
 
-        countryPath = malloc(strlen(path) + strlen(country->name) + 1);
-        strcpy(countryPath, path);
+        countryPath = malloc(strlen(inputDirectory) + strlen(country->name) + 1);
+        strcpy(countryPath, inputDirectory);
         strcat(countryPath, country->name);
 
         if ((countryDir = opendir(countryPath)) == NULL) {
-            perror("opendir");
+            perror("opendir failed");
             return -1;
         }
 

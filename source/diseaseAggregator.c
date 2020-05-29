@@ -1,6 +1,6 @@
 #include "../include/diseaseAggregator.h"
 
-int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirectory)
+int forkAssignFunctionality(int bufferSize, int numWorkers, char* inputDirectory)
 {
     pid_t pid;
     workerInfoPtr workersList = NULL;
@@ -18,7 +18,7 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
             return -1;
         }
         else if (pid == 0) {
-            if (workersFunction(bufferSize) == -1) {   //maybe use exec to do this
+            if (workersFunction(bufferSize, inputDirectory) == -1) {   //maybe use exec to do this
                 perror("workersFunction failed");
                 return -1;
             }
@@ -33,29 +33,94 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
             }
     }
 
-    if (diseaseAggregatorApp(workersList, numWorkers, bufferSize) == -1) {
+    if (diseaseAggregator(workersList, numWorkers, bufferSize, inputDirectory) == -1) {
         perror("diseaseAggregatorApp failed");
         return -1;
     }
     
     for (int i=0; i<numWorkers; i++)
-        wait(NULL);    
+        wait(NULL);
+
     return 0;
 }
 
-int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSize)
+int diseaseAggregator(workerInfoPtr workersList, int numWorkers, int bufferSize, char* inputDirectory)
 {
-    //open all the pipes and store countries in list and sent countries to workers
+    fd_set readfds;
+    char* msg;
+    workerInfoPtr iterator;
+    char* querie = NULL;
+    size_t len = 0;
+
+    if (distributeCountries(&workersList, numWorkers, bufferSize, inputDirectory) == -1) {
+        perror("distributeCountries failed");
+        return -1;
+    }
+
+    if (areWorkersReady(&workersList, bufferSize)) {
+        while (true) {
+                FD_ZERO(&readfds);
+                iterator = workersList;
+                int max = 0;
+                FD_SET(0, &readfds);
+
+                while (iterator != NULL) {
+                    FD_SET(iterator->read, &readfds);
+                    if (iterator->read > max)
+                        max = iterator->read;
+                    iterator = iterator->next;
+                }
+
+                if (pselect(max + 1, &readfds, NULL, NULL, NULL, NULL) == -1) {
+                    perror("pselect failed!");
+                    return -1;
+                }
+
+                if (FD_ISSET(0, &readfds))  {                    // if input from user occured
+                    if (getline(&querie, &len, stdin) == -1) {
+                        perror("getline failed");
+                        return -1;
+                    }
+                    printf("%s \n", querie);
+                    querie = strtok(querie, "\n");
+                    if (queriesHandler(workersList, querie) == -1) {
+                        break; // exit program for the time being
+                    }
+                }
+
+                // lots of errors since worker has been freed already so wait until while(true) in worker
+                // iterator = workersList;
+                // while (iterator != NULL) {                       // check which worker wrote
+                //     if (FD_ISSET(iterator->read, &readfds)) {
+                //         if ((msg = msgComposer(iterator->read, bufferSize)) == NULL) {
+                //             perror("msgComposer failed");
+                //             return -1;
+                //         }
+                //     }
+                //     iterator = iterator->next;
+                // }
+
+        }
+    }
+
+    free(querie);
+    destroyList(workersList);
+    return 0;
+}
+
+
+int distributeCountries(workerInfoPtr* workersList, int numWorkers, int bufferSize, char* inputDirectory)
+{
     DIR* countriesDir;
     struct dirent* d;
 
-    if ((countriesDir = opendir("./bashScript/dir")) == NULL) {
+    if ((countriesDir = opendir(inputDirectory)) == NULL) {
         perror("opendir");
         return -1;
     }
 
-    workerInfoPtr iterator = workersList;
-    // // in this while i distribute the countries to each child open the pipes
+    workerInfoPtr iterator = *workersList;
+    // in this while i distribute the countries to each child open the pipes
     while ((d = readdir(countriesDir)) != NULL) {
         if ( !strcmp(d->d_name, ".") || !strcmp(d->d_name, "..") )
             continue;
@@ -72,6 +137,7 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
         }
 
                      //check it out sto countries list exw mia parapanw grammi gia to script pou den tou areseio edw profanwes
+        // send countries to workers
         if (msgDecomposer(iterator->write, d->d_name, bufferSize) == -1) {
             perror("msgDecomposer failed");
             return -1;
@@ -84,10 +150,10 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
 
         iterator = iterator->next;
         if (iterator == NULL)
-            iterator = workersList;
+            iterator = *workersList;
     }
 
-    iterator = workersList;
+    iterator = *workersList;
     for (int i=0; i<numWorkers; i++) {
         if (msgDecomposer(iterator->write, "finished writing countries", bufferSize) == -1) {
             perror("msgDecomposer failed");
@@ -101,16 +167,19 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
         return -1;
     }
 
+    return 0;
+}
+
+
+bool areWorkersReady(workerInfoPtr* workersList, int bufferSize)
+{
     fd_set readfds;
     char* msg;
-
-    // makes sure every worker finishes reading and storing data
-    // before taking queries from user
-
+    workerInfoPtr iterator;
     while(true) {
         // parent read process from workers
         FD_ZERO(&readfds);
-        iterator = workersList;
+        iterator = *workersList;
         int max = 0;
         while (iterator != NULL) {
             FD_SET(iterator->read, &readfds);
@@ -124,7 +193,7 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
             return -1;
         }
 
-        iterator = workersList;
+        iterator = *workersList;
         while (iterator != NULL) {
             if (FD_ISSET(iterator->read, &readfds)) {
 
@@ -142,7 +211,7 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
             iterator = iterator->next;
         }
 
-        iterator = workersList;
+        iterator = *workersList;
         bool allReady=true;
         while (iterator != NULL) {
             if (iterator->readyForWork == false)
@@ -150,14 +219,11 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
             iterator = iterator->next;
         }
         if (allReady)
-            break;
+            return true;
     }
-
-    // start taking queries as input 
-
-    destroyList(workersList);
-    return 0;
+    return false;
 }
+
 
 int countriesNumber(char* countriesDirName)
 {

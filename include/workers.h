@@ -13,5 +13,5 @@
 #include "hashTable.h"
 
 
-int workersFunction(int);
-int setDataStructures(HashTablePtr*,HashTablePtr*,countryPtr);
+int workersFunction(int, char*);
+int setDataStructures(HashTablePtr*,HashTablePtr*,countryPtr, char*);

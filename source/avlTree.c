@@ -20,7 +20,8 @@ bool existInTree(treeNodePtr tree, patientPtr patient)
 
 treeNodePtr createNode(patientPtr patient)
 {
-    if ((treeNodePtr node = malloc(sizeof(treeNode))) == NULL) {
+    treeNodePtr node;
+    if ((node = malloc(sizeof(treeNode))) == NULL) {
         perror("malloc failed");
         return NULL;
     }
@@ -83,8 +84,8 @@ int getBalance(treeNodePtr node)
 treeNodePtr AVLInsert(treeNodePtr tree, patientPtr patient)
 {
     if (tree == NULL){
-        patientPtr pat;
-        if ((pat == createNode(patient)) == NULL) {
+        treeNodePtr pat;
+        if ((pat = createNode(patient)) == NULL) {
             perror("createNode failed");
             return NULL;
         }

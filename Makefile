@@ -10,10 +10,10 @@ PDIR = pipes
 
 EXECUTABLE = diseaseAggregator
 
-_DEPS = pipes.h diseaseAggregator.h workers.h list.h patient.h hashTable.h avlTree.h
+_DEPS = pipes.h diseaseAggregator.h workers.h list.h patient.h hashTable.h avlTree.h queries.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o pipes.o workers.o diseaseAggregator.o list.o patient.o hashTable.o avlTree.o
+_OBJ = main.o pipes.o workers.o diseaseAggregator.o list.o patient.o hashTable.o avlTree.o queries.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
@@ -25,10 +25,10 @@ $(EXECUTABLE): $(OBJ)
 .PHONY: clean run valgrind
 
 run:
-	./$(EXECUTABLE) -w 4 -b 20 -i ./bashScript/dir
+	./$(EXECUTABLE) -w 4 -b 20 -i ./bashScript/input_dir/
 
 valgrind:
-	valgrind --leak-check=full --show-leak-kinds=all ./$(EXECUTABLE) -w 4 -b 20 -i ./bashScript/dir
+	valgrind --leak-check=full --show-leak-kinds=all ./$(EXECUTABLE) -w 4 -b 20 -i ./bashScript/input_dir/
 
 clean:
 	rm -f $(ODIR)/*.o

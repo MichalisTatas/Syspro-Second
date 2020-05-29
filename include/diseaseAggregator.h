@@ -11,8 +11,10 @@
 
 #include "pipes.h"
 #include "workers.h"
-#include "list.h"
+#include "queries.h"
 
-int diseaseAggregatorFunction(int, int, char*);
-int diseaseAggregatorApp(workerInfoPtr, int, int);
+int forkAssignFunctionality(int, int, char*);
+int diseaseAggregator(workerInfoPtr, int, int, char*);
+int distributeCountries(workerInfoPtr*, int, int, char*);
+bool areWorkersReady(workerInfoPtr*, int);
 int countriesNumber(char*);

@@ -14,9 +14,12 @@ Done :
 	-added error handling to every function
 
 To Do :
-	-mk Composer & decomposer work
-	-create all the data structures
+	-check what fotiadis said about buffersize
+	-dont send buffersize if bytes of message less than that
+	-check avl tree
 	-handle the signals
 	-queries
 
 
+???
+pernaw input_dir/ is it ok?
