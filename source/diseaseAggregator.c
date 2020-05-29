@@ -19,7 +19,7 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
         }
         else if (pid == 0) {
             if (workersFunction(bufferSize) == -1) {   //maybe use exec to do this
-                printf("Error in workers Function\n");
+                perror("workersFunction failed");
                 return -1;
             }
             free(inputDirectory);
@@ -27,11 +27,14 @@ int diseaseAggregatorFunction(int bufferSize, int numWorkers, char* inputDirecto
             exit(0);
         }
         else
-            workersList = addPidInList(workersList, pid);
+            if ((workersList = addPidInList(workersList, pid)) == NULL) {
+                perror("addPidInList failed");
+                return -1;
+            }
     }
 
     if (diseaseAggregatorApp(workersList, numWorkers, bufferSize) == -1) {
-        printf("Error occurred in diseaseAggregatorApp!\n");
+        perror("diseaseAggregatorApp failed");
         return -1;
     }
     
@@ -59,19 +62,25 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
 
         if (iterator->read == -1 || iterator->write == -1) {
             if ((iterator->write = createPipe("pipes/", iterator->pid, O_WRONLY,"P2C")) == -1) {  //P2C parent writes to child
-                printf("Error opening or creating pipe! \n");
+                perror("createPipe failed");
                 return -1;
             }
             if ((iterator->read = createPipe("pipes/", iterator->pid, O_RDONLY,"C2P")) == -1) {  //C2P child writes to parent
-                printf("Error opening or creating pipe! \n");
+                perror("createPipe failed");
                 return -1;
             }
         }
 
                      //check it out sto countries list exw mia parapanw grammi gia to script pou den tou areseio edw profanwes
-        msgDecomposer(iterator->write, d->d_name, bufferSize);
+        if (msgDecomposer(iterator->write, d->d_name, bufferSize) == -1) {
+            perror("msgDecomposer failed");
+            return -1;
+        }
 
-        addCountryInList(&iterator->countriesList, d->d_name);
+        if (addCountryInList(&iterator->countriesList, d->d_name) == -1) {
+            perror("addCountryInList failed");
+            return -1;
+        }
 
         iterator = iterator->next;
         if (iterator == NULL)
@@ -80,7 +89,10 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
 
     iterator = workersList;
     for (int i=0; i<numWorkers; i++) {
-        msgDecomposer(iterator->write, "finished writing countries", bufferSize);
+        if (msgDecomposer(iterator->write, "finished writing countries", bufferSize) == -1) {
+            perror("msgDecomposer failed");
+            return -1;
+        }
         iterator = iterator->next;
     }
 
@@ -115,7 +127,12 @@ int diseaseAggregatorApp(workerInfoPtr workersList, int numWorkers, int bufferSi
         iterator = workersList;
         while (iterator != NULL) {
             if (FD_ISSET(iterator->read, &readfds)) {
-                msg = msgComposer(iterator->read, bufferSize);
+
+                if ((msg = msgComposer(iterator->read, bufferSize)) == NULL) {
+                    perror("msgComposer failed");
+                    return -1;
+                }
+                
                 if (!strcmp(msg, "finished!")) {
                     iterator->readyForWork = true;
                     printf("epa8e trikimia %s \n", msg);

@@ -20,7 +20,10 @@ bool existInTree(treeNodePtr tree, patientPtr patient)
 
 treeNodePtr createNode(patientPtr patient)
 {
-    treeNodePtr node = malloc(sizeof(treeNode));
+    if ((treeNodePtr node = malloc(sizeof(treeNode))) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
     node->patient = patient;
     node->right = NULL;
     node->left = NULL;
@@ -79,12 +82,26 @@ int getBalance(treeNodePtr node)
 
 treeNodePtr AVLInsert(treeNodePtr tree, patientPtr patient)
 {
-    if (tree == NULL)
-        return (createNode(patient));
-    if (compareDates(patient->entryDate, tree->patient->entryDate) == 1)
-        tree->right = AVLInsert(tree->right, patient);
-    else if (compareDates(patient->entryDate, tree->patient->entryDate) == -1)
-        tree->left = AVLInsert(tree->left, patient);
+    if (tree == NULL){
+        patientPtr pat;
+        if ((pat == createNode(patient)) == NULL) {
+            perror("createNode failed");
+            return NULL;
+        }
+        return pat;
+    }
+    if (compareDates(patient->entryDate, tree->patient->entryDate) == 1) {
+        if ((tree->right = AVLInsert(tree->right, patient)) == NULL) {
+            perror("AVLInsert failed");
+            return NULL;
+        }
+    }
+    else if (compareDates(patient->entryDate, tree->patient->entryDate) == -1) {
+        if ((tree->left = AVLInsert(tree->left, patient)) == NULL) {
+            perror("AVLInsert failed");
+            return NULL;
+        }
+    }
     else
         return tree;                // if equal dont insert into tree
 

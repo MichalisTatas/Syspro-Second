@@ -7,5 +7,5 @@
 #pragma once
 
 int createPipe(char*, int, int, char*);
-void msgDecomposer(int, char*, int);
+int msgDecomposer(int, char*, int);
 char* msgComposer(int, int);

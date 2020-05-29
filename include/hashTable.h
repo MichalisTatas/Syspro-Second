@@ -28,6 +28,6 @@ typedef HashTable* HashTablePtr;
 int findTree(HTNodePtr, char*, int);
 void HTPrint(HashTablePtr);
 HashTablePtr HTCreate(int);
-void HTInsert(HashTablePtr, char*, patientPtr);
+int HTInsert(HashTablePtr, char*, patientPtr);
 int hashFunction(char*);
 void HTDestroy(HashTablePtr);

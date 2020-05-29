@@ -181,5 +181,4 @@ void destroyPatientList(patientPtr patient)
     free(patient->patientFirstName);
     free(patient->patientLastName);
     free(patient);
-
 }

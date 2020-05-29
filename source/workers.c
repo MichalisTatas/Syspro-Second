@@ -15,11 +15,11 @@ int workersFunction(int bufferSize)
     countryPtr countryList = NULL;
 
     if ((readDesc = createPipe("pipes/", pid, O_RDONLY,"P2C")) == -1) {  //P2C parent writes to child
-        printf("Error opening or creating pipe! \n");
+        perror("createPipe failed");
         return -1;
     }
     if ((writeDesc = createPipe("pipes/", pid, O_WRONLY,"C2P")) == -1) {  //C2P child writes to parent
-        printf("Error opening or creating pipe! \n");
+        perror("createPipe failed");
         return -1;
     }
 
@@ -37,18 +37,33 @@ int workersFunction(int bufferSize)
             return -1;
         }
 
-        if (!strcmp((msg = msgComposer(readDesc, bufferSize)), "finished writing countries")) {
+        if ((msg = msgComposer(readDesc, bufferSize)) == NULL) {
+            perror("msgComposer failed");
+            return -1;
+        }
+
+        if (!strcmp(msg, "finished writing countries")) {
             free(msg);
             break;
         }
         else {
-            addCountryInList(&countryList, msg);
+            if (addCountryInList(&countryList, msg) == -1) {
+                perror("addCountryInList failed");
+                return -1;
+            }
             free(msg);
         }
     }
 
-    HashTablePtr diseaseHashtable = HTCreate(10);
-    HashTablePtr countryHashtable = HTCreate(10);
+    HashTablePtr diseaseHashtable,countryHashtable;
+    if ((diseaseHashtable = HTCreate(10)) == NULL) {
+        perror("HTCreate failed");
+        return -1;
+    }
+    if ((countryHashtable = HTCreate(10)) == NULL) {
+        perror("HTCreate failed");
+        return -1;
+    }
 
     if (setDataStructures(&diseaseHashtable, &countryHashtable, countryList) == -1) {
         perror("setDataStructures");
@@ -59,7 +74,10 @@ int workersFunction(int bufferSize)
     // HTPrint(countryHashtable);
 
     //finished filling data structures ready for queries
-    msgDecomposer(writeDesc, "finished!", bufferSize);
+    if (msgDecomposer(writeDesc, "finished!", bufferSize) == -1) {
+        perror("msgDecomposer failed");
+        return -1;
+    }
 
     HTDestroy(diseaseHashtable);
     HTDestroy(countryHashtable);
@@ -97,7 +115,10 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
         while ((d = readdir(countryDir)) != NULL) {
             if ( !strcmp(d->d_name, ".") || !strcmp(d->d_name, "..") )
                 continue;
-            addCountryInList(&dateList, d->d_name);
+            if (addCountryInList(&dateList, d->d_name) == -1) {
+                perror("addCountryInList failed");
+                return -1;
+            }
         }
 
         ///////////////////////////////////////////////////////////////
@@ -122,8 +143,14 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
                     return -1;
                 }
                 patientListHead = patientListInsert(patientListHead, currentPatient);
-                HTInsert(*diseaseHashtable, currentPatient->diseaseID, currentPatient);
-                HTInsert(*countryHashtable, currentPatient->country, currentPatient);
+                if (HTInsert(*diseaseHashtable, currentPatient->diseaseID, currentPatient) == -1) {
+                    perror("HTInsert failed");
+                    return -1;
+                }
+                if (HTInsert(*countryHashtable, currentPatient->country, currentPatient) == -1) {
+                    perror("HTInsert failed");
+                    return -1;
+                }
             }
             
             if (fclose(filePtr) == EOF) {

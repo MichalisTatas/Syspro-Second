@@ -3,14 +3,18 @@
 workerInfoPtr addPidInList(workerInfoPtr head, int pid)
 {
     workerInfoPtr temp, curr;
-    temp = malloc(sizeof(workerInfo));
+    if ((temp = malloc(sizeof(workerInfo))) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+
     temp->pid = pid;
     temp->read = -1;
     temp->write = -1;
     temp->readyForWork = false;
     temp->countriesList = NULL;
     temp->next = NULL;
-
+    
     if (head == NULL)
         return temp;
 
@@ -28,17 +32,22 @@ workerInfoPtr addPidInList(workerInfoPtr head, int pid)
 
 // }
 
-void addCountryInList(countryPtr* head, char* countryName)
+int addCountryInList(countryPtr* head, char* countryName)
 {
-    countryPtr cntry = malloc(sizeof(country));
+    countryPtr cntry;
+    if ((cntry = malloc(sizeof(country))) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
     if ((cntry->name = malloc(strlen(countryName) + 1)) == NULL) {
         perror("malloc failed!");
-        return;
+        return -1;
     }
     strcpy(cntry->name, countryName);
 
     cntry->next = *head;
     *head = cntry;
+    return 0;
 }
 
 void destroyCountryList(countryPtr head)

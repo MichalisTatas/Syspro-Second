@@ -11,6 +11,7 @@ Done :
 	-created processes
 	-created pipes
 	-catch signals
+	-added error handling to every function
 
 To Do :
 	-mk Composer & decomposer work
