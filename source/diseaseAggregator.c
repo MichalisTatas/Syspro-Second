@@ -81,25 +81,11 @@ int diseaseAggregator(workerInfoPtr workersList, int numWorkers, int bufferSize,
                         perror("getline failed");
                         return -1;
                     }
-                    printf("%s \n", querie);
                     querie = strtok(querie, "\n");
-                    if (queriesHandler(workersList, querie) == -1) {
+                    if (queriesHandler(workersList, querie, bufferSize) == -1) {
                         break; // exit program for the time being
                     }
                 }
-
-                // lots of errors since worker has been freed already so wait until while(true) in worker
-                // iterator = workersList;
-                // while (iterator != NULL) {                       // check which worker wrote
-                //     if (FD_ISSET(iterator->read, &readfds)) {
-                //         if ((msg = msgComposer(iterator->read, bufferSize)) == NULL) {
-                //             perror("msgComposer failed");
-                //             return -1;
-                //         }
-                //     }
-                //     iterator = iterator->next;
-                // }
-
         }
     }
 
@@ -204,7 +190,7 @@ bool areWorkersReady(workerInfoPtr* workersList, int bufferSize)
                 
                 if (!strcmp(msg, "finished!")) {
                     iterator->readyForWork = true;
-                    printf("epa8e trikimia %s \n", msg);
+                    // printf("epa8e trikimia %s \n", msg);
                     free(msg);
                 }
             }

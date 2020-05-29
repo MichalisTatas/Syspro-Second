@@ -11,6 +11,7 @@
 
 #include "list.h"
 #include "hashTable.h"
+#include "queriesAnswering.h"
 
 
 int workersFunction(int, char*);

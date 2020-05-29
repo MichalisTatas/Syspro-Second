@@ -11,7 +11,7 @@
 
 #include "pipes.h"
 #include "workers.h"
-#include "queries.h"
+#include "queriesHandling.h"
 
 int forkAssignFunctionality(int, int, char*);
 int diseaseAggregator(workerInfoPtr, int, int, char*);

@@ -70,15 +70,22 @@ int workersFunction(int bufferSize, char* inputDirectory)
         return -1;
     }
 
-    HTPrint(diseaseHashtable);
-    HTPrint(countryHashtable);
-
     //finished filling data structures ready for queries
     if (msgDecomposer(writeDesc, "finished!", bufferSize) == -1) {
         perror("msgDecomposer failed");
         return -1;
     }
 
+    while (true){
+        if ((msg = msgComposer(readDesc, bufferSize)) == NULL) {
+            perror("msgComposer failed");
+            return -1;
+        }
+        if (queriesAnswerer(msg, bufferSize, countryHashtable, diseaseHashtable, countryList) == 1)
+            break;
+    }
+
+    free(msg);
     HTDestroy(diseaseHashtable);
     HTDestroy(countryHashtable);
     destroyCountryList(countryList);

@@ -1,4 +1,4 @@
-
+FTIKSE TA COUNTRIES GAMW TO 8EO
 
 
 
@@ -19,6 +19,7 @@ To Do :
 	-check avl tree
 	-handle the signals
 	-queries
+	- close pipes from inside the program
 
 
 ???

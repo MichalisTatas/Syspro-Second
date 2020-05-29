@@ -1,17 +1,17 @@
-#include "../include/queries.h"
+#include "../include/queriesAnswering.h"
 
-int queriesHandler(workerInfoPtr workersList,const char* querie)
+int queriesAnswerer(const char* querie, int bufferSize, HashTablePtr countryHashTable, HashTablePtr diseaseHashTable, countryPtr countriesList)
 {
     wordexp_t p;
     wordexp(querie, &p, 0);
 
     if (!strcmp(p.we_wordv[0], "/listCountries")) {
-        printf("/listCountries\n");
         if (p.we_wordc != 1) {
             printf("number of arguments is not right! \n");
             wordfree(&p);
             return -1;
         }
+        
     }
     else if (!strcmp(p.we_wordv[0], "/diseaseFrequency")) {
         printf("/diseaseFrequency\n");
@@ -81,33 +81,20 @@ int queriesHandler(workerInfoPtr workersList,const char* querie)
         // }
     }
     else if (!strcmp(p.we_wordv[0], "/exit")) {
-        printf("/exit\n");
         if (p.we_wordc != 1) {
             printf("number of arguments is not right! \n");
             wordfree(&p);
             return -1;
         }
         wordfree(&p);
+        return 1;
+    }
+    else {
+        printf("wrong querie ! \n");
+        wordfree(&p);
         return -1;
     }
 
     wordfree(&p);
     return 0;
-}
-
-int selectWorker(workerInfoPtr workersList, char* country) // returns readDesc of worker which handles the country
-{
-    workerInfoPtr iterator = workersList;
-    countryPtr countryIterator;
-    while (iterator != NULL) {
-        countryIterator = iterator->countriesList;
-        while (countryIterator != NULL) {
-            if (!strcmp(countryIterator->name, country)) {
-                return iterator->read;
-            }
-            countryIterator = countryIterator->next;
-        }
-        iterator = iterator->next;
-    }
-    return -1;
 }
