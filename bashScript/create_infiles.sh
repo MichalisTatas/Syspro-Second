@@ -11,6 +11,8 @@ fi
 
 input="countriesFile"
 
+recordId=0
+
 while IFS= read -r cntry
 do
     mkdir -p $3/$cntry
@@ -36,7 +38,7 @@ do
 
         for (( i=0; i<$5; i++))
         do
-            id=$((RANDOM % 1000))
+            id=$recordId
             state="ENTER"
             random=$((RANDOM % 10))
             if [ "$random" -le 4 ]
@@ -45,6 +47,7 @@ do
             fi
             entry=$id" "$state" "$(head /dev/urandom | tr -dc A-Za-z | head -c 13)" "$(head /dev/urandom | tr -dc A-Za-z | head -c 13)" "$(shuf -n 1 $1)" "$((RANDOM % 120 ))
             echo $entry >> $3/$cntry/$date
+            recordId=$(($recordId+1))
         done
     done
 done < "$input"

@@ -56,6 +56,7 @@ int workersFunction(int bufferSize, char* inputDirectory)
     }
 
     HashTablePtr diseaseHashtable,countryHashtable;
+    patientPtr patientListHead = NULL;
     if ((diseaseHashtable = HTCreate(10)) == NULL) {
         perror("HTCreate failed");
         return -1;
@@ -65,7 +66,7 @@ int workersFunction(int bufferSize, char* inputDirectory)
         return -1;
     }
 
-    if (setDataStructures(&diseaseHashtable, &countryHashtable, countryList, inputDirectory) == -1) {
+    if (setDataStructures(&diseaseHashtable, &countryHashtable, countryList, &patientListHead, inputDirectory) == -1) {
         perror("setDataStructures");
         return -1;
     }
@@ -81,18 +82,21 @@ int workersFunction(int bufferSize, char* inputDirectory)
             perror("msgComposer failed");
             return -1;
         }
-        if (queriesAnswerer(msg, bufferSize, countryHashtable, diseaseHashtable, countryList) == 1)
+        if (queriesAnswerer(msg, bufferSize, countryHashtable, diseaseHashtable, countryList, patientListHead, writeDesc, readDesc) == 1)
             break;
+            
+        free(msg);
     }
 
-    free(msg);
+    free(msg);                   //its here because of break in exit for the time being
+    destroyPatientList(patientListHead);
     HTDestroy(diseaseHashtable);
     HTDestroy(countryHashtable);
     destroyCountryList(countryList);
     return 0;
 }
 
-int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashtable,countryPtr countryList, char* inputDirectory)
+int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashtable,countryPtr countryList, patientPtr* patientListHead,  char* inputDirectory)
 {
     // open each country file and fill the needed data structures
     DIR* countryDir;
@@ -104,7 +108,6 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
     char* line = NULL;
     size_t len = 0;
     patientPtr currentPatient = NULL;
-    patientPtr patientListHead = NULL;
 
     while (country != NULL) {
 
@@ -135,7 +138,7 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
         while (date != NULL) {
             datePath = malloc(strlen(countryPath) + strlen(date->name) + 2);
             strcpy(datePath, countryPath);
-            strcat(datePath, "/");
+            strcat(datePath, "/");       //        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             strcat(datePath, date->name);
             if ((filePtr = fopen(datePath, "r")) == NULL)   {
                 perror("fopen failed");
@@ -148,7 +151,7 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
                     perror("createPatientStruct failed");
                     return -1;
                 }
-                patientListHead = patientListInsert(patientListHead, currentPatient);
+                *patientListHead = patientListInsert(*patientListHead, currentPatient);
                 if (HTInsert(*diseaseHashtable, currentPatient->diseaseID, currentPatient) == -1) {
                     perror("HTInsert failed");
                     return -1;
@@ -177,7 +180,6 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
         country = country->next;
     }
 
-    destroyPatientList(patientListHead);
     free(line);
     return 0;
 }

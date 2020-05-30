@@ -61,17 +61,10 @@ int diseaseAggregator(workerInfoPtr workersList, int numWorkers, int bufferSize,
         while (true) {
                 FD_ZERO(&readfds);
                 iterator = workersList;
-                int max = 0;
+                // int max = 0;
                 FD_SET(0, &readfds);
 
-                while (iterator != NULL) {
-                    FD_SET(iterator->read, &readfds);
-                    if (iterator->read > max)
-                        max = iterator->read;
-                    iterator = iterator->next;
-                }
-
-                if (pselect(max + 1, &readfds, NULL, NULL, NULL, NULL) == -1) {
+                if (pselect(1, &readfds, NULL, NULL, NULL, NULL) == -1) {
                     perror("pselect failed!");
                     return -1;
                 }

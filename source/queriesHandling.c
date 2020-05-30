@@ -55,12 +55,12 @@ int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, in
                     
                     if (!strcmp(msg, "finished!")) {
                         iterator->readyForWork = true;
-                        // printf("epa8e trikimia %s \n", msg);
                         free(msg);
                         break;
                     }
 
                     printf("%s \n", msg);
+                    free(msg);
                 }
                 iterator = iterator->next;
             }
@@ -90,6 +90,7 @@ int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, in
             }
 
             printf("%s \n", msg);
+            free(msg);
         }
     }
     return -1;
@@ -111,71 +112,71 @@ int queriesHandler(workerInfoPtr workersList,const char* querie, int bufferSize)
         listCountriesFunction(workersList);
     }
     else if (!strcmp(p.we_wordv[0], "/diseaseFrequency")) {
-        printf("/diseaseFrequency\n");
-        // if (p.we_wordc == 4) {
-        //     //call function
-        // }
+        if (p.we_wordc == 4) {
+            sendQuerie(workersList, querie, -1, bufferSize);
+            querieAnswer(workersList, querie, -1, bufferSize);
+        }
         // else if (p.we_wordc == 5) {
         //     //call selectworker
         //     //callfunction
         // }
-        // else {
-            // printf("number of arguments is not right! \n");
-            // wordfree(&p);
-            // return -1;
-        // }
+        else {
+            printf("number of arguments is not right! \n");
+            wordfree(&p);
+            return -1;
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/topk-AgeRanges")) {
-        printf("/topk-AgeRanges\n");
-        // if (p.we_wordc == 6) {
-        //     //call function
-        // }
-        // else {
-        //     printf("number of arguments is not right! \n");
-        //     wordfree(&p);
-        //     return -1;
-        // }
+        if (p.we_wordc == 6) {
+            sendQuerie(workersList, querie, -1, bufferSize);
+            querieAnswer(workersList, querie, -1, bufferSize);
+        }
+        else {
+            printf("number of arguments is not right! \n");
+            wordfree(&p);
+            return -1;
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/searchPatientRecord")) {
-        printf("/searchPatientRecord\n");
-        // if (p.we_wordc == 2) {
-        //     // call function
-        // }
-        // else {
-        //     printf("number of arguments is not right! \n");
-        //     wordfree(&p);
-        //     return -1;
-        // }
+        if (p.we_wordc == 2) {
+            sendQuerie(workersList, querie, -1, bufferSize);
+            querieAnswer(workersList, querie, -1, bufferSize);
+        }
+        else {
+            printf("number of arguments is not right! \n");
+            wordfree(&p);
+            return -1;
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/numPatientAdmissions")) {
-        printf("/numPatientAdmissions\n");
-        // if (p.we_wordc == 4) {
-        //     // call funtion
-        // }
+        if (p.we_wordc == 4) {
+            sendQuerie(workersList, querie, -1, bufferSize);
+            querieAnswer(workersList, querie, -1, bufferSize);
+        }
         // else if (p.we_wordc == 5) {
         //     //call selectWorker
         //     // call function
         // }
-        // else {
-        //     printf("number of arguments is not right! \n");
-        //     wordfree(&p);
-        //     return -1;
-        // }
+        else {
+            printf("number of arguments is not right! \n");
+            wordfree(&p);
+            return -1;
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/numPatientDischarges")) {
-        printf("/numPatientDischarges\n");
-        // if (p.we_wordc == 4) {
-        //     //call function
-        // }
+        if (p.we_wordc == 4) {
+            sendQuerie(workersList, querie, -1, bufferSize);
+            querieAnswer(workersList, querie, -1, bufferSize);
+        }
         // else if (p.we_wordc == 5) {
         //     //call selectWorker
         //     //call function
         // }
-        // else {
-        //     printf("number of arguments is not right! \n");
-        //     wordfree(&p);
-        //     return -1;
-        // }
+        else {
+            printf("number of arguments is not right! \n");
+            wordfree(&p);
+            return -1;
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/exit")) {
         if (p.we_wordc != 1) {

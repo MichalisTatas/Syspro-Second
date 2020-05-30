@@ -15,4 +15,4 @@
 
 
 int workersFunction(int, char*);
-int setDataStructures(HashTablePtr*,HashTablePtr*,countryPtr, char*);
+int setDataStructures(HashTablePtr*,HashTablePtr*,countryPtr, patientPtr*, char*);

@@ -12,14 +12,15 @@ Done :
 	-created pipes
 	-catch signals
 	-added error handling to every function
+	-finished /searchPatientRecord
 
 To Do :
-	-check what fotiadis said about buffersize
-	-dont send buffersize if bytes of message less than that
+	-create function for exit patients as well
 	-check avl tree
 	-handle the signals
 	-queries
 	- close pipes from inside the program
+	- check if wrong input what happens before seg not know if due to that
 
 
 ???

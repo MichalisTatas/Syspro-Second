@@ -7,6 +7,7 @@
 datePtr createDate(const char* line)
 {
     char* temp;
+    char* result;
     if ((temp = malloc(strlen(line) + 1)) == NULL) {
         perror("malloc failed");
         return NULL;
@@ -18,13 +19,13 @@ datePtr createDate(const char* line)
         perror("malloc failed");
         return NULL;
     }
-    
-    strtok(temp, "-");
-    dt->day = atoi(temp);
-    strtok(NULL, "-");
-    dt->month = atoi(temp);
-    strtok(NULL, "");
-    dt->year = atoi(temp);
+
+    result = strtok(temp, "-");
+    dt->day = atoi(result);
+    result = strtok(NULL, "-");
+    dt->month = atoi(result);
+    result = strtok(NULL, "");
+    dt->year = atoi(result);
 
     free(temp);
     return dt;
