@@ -97,7 +97,7 @@ char* numPatientAdmissions(HashTablePtr diseaseHashTable, countryPtr countries, 
     int bucketNum = hashFunction(disease);
     int numPerCountry;
 
-    numPerCountry = searchInTree(current->name, disease, date1, date2, diseaseHashTable->table[bucketNum]->tree);
+    numPerCountry = numPatientAdmissionsHelper(current->name, disease, date1, date2, diseaseHashTable->table[bucketNum]->tree);
     char buffer[4];
     sprintf(buffer, "%d",numPerCountry);
     char* msg = malloc(strlen(current->name) + strlen(buffer) + 2);
@@ -147,34 +147,32 @@ char* resynthesizePatient(patientPtr patient)
     return buffer;
 }
 
-int searchInTree(char* country, char* disease, datePtr date1, datePtr date2, treeNodePtr tree)
+int numPatientAdmissionsHelper(char* country, char* disease, datePtr date1, datePtr date2, treeNodePtr tree)
 {
     if (tree == NULL)
         return 0;
 
     if (compareDates(tree->patient->entryDate, date1) == -1) {
-        searchInTree(country, disease, date1, date2, tree->right);
+        numPatientAdmissionsHelper(country, disease, date1, date2, tree->right);
     }
     else if (compareDates(tree->patient->entryDate, date2) == 1) {
-        searchInTree(country, disease, date1, date2, tree->left);
+        numPatientAdmissionsHelper(country, disease, date1, date2, tree->left);
     }
 
     int count = 0;
     patientPtr list;
 
     if (!strcmp(tree->patient->country, country)) {
-        if (compareDates(tree->patient->entryDate, date1) >= 0) {
-            if ((tree->patient->exitDate == NULL) || (compareDates(tree->patient->exitDate, date2) <= 0)) {
-                list = tree->patient;  //searches the list of patients because some may not be in the tree bcz they have the same date
-                while (list != NULL && compareDates(list->entryDate, tree->patient->entryDate)==0){
-                    count ++;
-                    list = list->next;
-                }
+        if ((compareDates(tree->patient->entryDate, date1) >= 0) && (compareDates(tree->patient->entryDate, date2) <=0)) {
+            list = tree->patient;  //searches the list of patients because some may not be in the tree bcz they have the same date
+            while (list != NULL && compareDates(list->entryDate, tree->patient->entryDate)==0){
+                count ++;
+                list = list->next;
             }
         }
     }
 
-    count += (searchInTree(country, disease, date1, date2, tree->left) + searchInTree(country, disease, date1, date2, tree->right));
+    count += (numPatientAdmissionsHelper(country, disease, date1, date2, tree->left) + numPatientAdmissionsHelper(country, disease, date1, date2, tree->right));
 
     return count;
 }

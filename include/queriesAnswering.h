@@ -12,4 +12,4 @@ char* searchPatientRecord(char*, patientPtr);
 char* numPatientAdmissions(HashTablePtr, countryPtr, char*, datePtr, datePtr);
 
 char* resynthesizePatient(patientPtr);
-int searchInTree(char*, char*, datePtr, datePtr, treeNodePtr);
+int numPatientAdmissionsHelper(char*, char*, datePtr, datePtr, treeNodePtr);

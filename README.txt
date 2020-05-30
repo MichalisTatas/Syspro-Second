@@ -15,6 +15,8 @@ Done :
 	-finished /searchPatientRecord
 
 To Do :
+	-check script random name length id and EXIT maybe
+	-check patients if enter before exit lol
 	-check spritnf in resynthesize why wokrs
 	-check numPatients wtf code
 	-create function for exit patients as well
