@@ -60,7 +60,34 @@ int queriesAnswerer(const char* querie, int bufferSize, HashTablePtr countryHash
         msgDecomposer(writeDesc, "finished!", bufferSize);
     }
     else if (!strcmp(p.we_wordv[0], "/numPatientDischarges")) {
-        msgDecomposer(writeDesc, "/numPatientDischarges", bufferSize);
+        date1 = createDate(p.we_wordv[2]);
+        date2 = createDate(p.we_wordv[3]);
+        countryPtr countryGiven=NULL;
+        if (p.we_wordc == 4) {
+            countryGiven = countriesList;
+            while(countryGiven != NULL) {
+                 char* msg = numPatientDischarges(diseaseHashTable, countryGiven, p.we_wordv[1], date1, date2);
+                msgDecomposer(writeDesc, msg, bufferSize);
+                free(msg);
+                countryGiven = countryGiven->next;
+            }
+        }
+        else if (p.we_wordc == 5) {
+            addCountryInList(&countryGiven, p.we_wordv[4]);
+            char* msg = numPatientDischarges(diseaseHashTable, countryGiven, p.we_wordv[1], date1, date2);
+            msgDecomposer(writeDesc, msg, bufferSize);
+            free(msg);
+            destroyCountryList(countryGiven);
+        }
+        else {
+            printf("number of arguments is not right! \n");
+            free(date1);
+            free(date2);
+            wordfree(&p);
+            return -1;
+        }
+        free(date1);
+        free(date2);
         msgDecomposer(writeDesc, "finished!", bufferSize);
     }
     else if (!strcmp(p.we_wordv[0], "/exit")) {
@@ -105,7 +132,23 @@ char* numPatientAdmissions(HashTablePtr diseaseHashTable, countryPtr countries, 
     strcat(msg, " ");
     strcat(msg, buffer);
     return msg;
-    
+}
+
+
+char* numPatientDischarges(HashTablePtr diseaseHashTable, countryPtr countries, char* disease, datePtr date1, datePtr date2) // if country argument given countries contains only that country
+{                                                                                             // otherwise every country the worker is handling
+    countryPtr current  = countries;
+    int bucketNum = hashFunction(disease);
+    int numPerCountry;
+
+    numPerCountry = numPatientDischargesHelper(current->name, disease, date1, date2, diseaseHashTable->table[bucketNum]->tree);
+    char buffer[4];
+    sprintf(buffer, "%d",numPerCountry);
+    char* msg = malloc(strlen(current->name) + strlen(buffer) + 2);
+    strcpy(msg, current->name);
+    strcat(msg, " ");
+    strcat(msg, buffer);
+    return msg;
 }
 
 char* resynthesizePatient(patientPtr patient)
@@ -173,6 +216,39 @@ int numPatientAdmissionsHelper(char* country, char* disease, datePtr date1, date
     }
 
     count += (numPatientAdmissionsHelper(country, disease, date1, date2, tree->left) + numPatientAdmissionsHelper(country, disease, date1, date2, tree->right));
+
+    return count;
+}
+
+
+int numPatientDischargesHelper(char* country, char* disease, datePtr date1, datePtr date2, treeNodePtr tree)
+{
+    if (tree == NULL)
+        return 0;
+
+    if (compareDates(tree->patient->entryDate, date1) == -1) {
+        numPatientDischargesHelper(country, disease, date1, date2, tree->right);
+    }
+    else if (compareDates(tree->patient->entryDate, date2) == 1) {
+        numPatientDischargesHelper(country, disease, date1, date2, tree->left);
+    }
+
+    int count = 0;
+    patientPtr list;
+
+    if (!strcmp(tree->patient->country, country)) {
+        if (tree->patient->exitDate != NULL) {           // MIGHT CHANGE LATER
+            if ((compareDates(tree->patient->exitDate, date1) >= 0) && (compareDates(tree->patient->exitDate, date2) <=0)) {
+                list = tree->patient;  //searches the list of patients because some may not be in the tree bcz they have the same date
+                while (list != NULL && compareDates(list->entryDate, tree->patient->entryDate)==0){
+                    count ++;
+                    list = list->next;
+                }
+            }
+        }
+    }
+
+    count += (numPatientDischargesHelper(country, disease, date1, date2, tree->left) + numPatientDischargesHelper(country, disease, date1, date2, tree->right));
 
     return count;
 }
