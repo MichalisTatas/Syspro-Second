@@ -153,10 +153,10 @@ int queriesHandler(workerInfoPtr workersList,const char* querie, int bufferSize)
             sendQuerie(workersList, querie, -1, bufferSize);
             querieAnswer(workersList, querie, -1, bufferSize);
         }
-        // else if (p.we_wordc == 5) {
-        //     //call selectWorker
-        //     // call function
-        // }
+        else if (p.we_wordc == 5) {
+            sendQuerie(NULL, querie, selectWorker(workersList, p.we_wordv[4], "write"), bufferSize);
+            querieAnswer(NULL, querie, selectWorker(workersList, p.we_wordv[4], "read"), bufferSize);
+        }
         else {
             printf("number of arguments is not right! \n");
             wordfree(&p);
@@ -199,7 +199,7 @@ int queriesHandler(workerInfoPtr workersList,const char* querie, int bufferSize)
     return 0;
 }
 
-int selectWorker(workerInfoPtr workersList, char* country) // returns readDesc of worker which handles the country
+int selectWorker(const workerInfoPtr workersList, char* country, char* rdwr) // returns readDesc of worker which handles the country
 {
     workerInfoPtr iterator = workersList;
     countryPtr countryIterator;
@@ -207,13 +207,16 @@ int selectWorker(workerInfoPtr workersList, char* country) // returns readDesc o
         countryIterator = iterator->countriesList;
         while (countryIterator != NULL) {
             if (!strcmp(countryIterator->name, country)) {
-                return iterator->read;
+                if (!strcmp(rdwr, "read"))
+                    return iterator->read;
+                else
+                    return iterator->write;
             }
             countryIterator = countryIterator->next;
         }
         iterator = iterator->next;
     }
-    return -1;
+    return NULL;
 }
 
 void listCountriesFunction(workerInfoPtr workersList)

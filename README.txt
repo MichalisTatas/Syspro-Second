@@ -15,6 +15,8 @@ Done :
 	-finished /searchPatientRecord
 
 To Do :
+	-check spritnf in resynthesize why wokrs
+	-check numPatients wtf code
 	-create function for exit patients as well
 	-check avl tree
 	-handle the signals

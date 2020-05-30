@@ -24,7 +24,7 @@ datePtr createDate(const char* line)
     dt->day = atoi(result);
     result = strtok(NULL, "-");
     dt->month = atoi(result);
-    result = strtok(NULL, "");
+    result = strtok(NULL, " ");
     dt->year = atoi(result);
 
     free(temp);
