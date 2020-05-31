@@ -1,4 +1,7 @@
 
+IF TIME REMAINING THEN PUT DATA STRUCTURES IN THEIR WON DIRECTORY
+
+
 ******************IMPORTANT CHANGE BASHSCRIPT*******************
 need to change bashscripot dir and use path not hardcoded
 xanw mia xwra sto bash script
