@@ -26,6 +26,7 @@ int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, in
     fd_set readfds;
     char* msg;
     workerInfoPtr iterator = workersList;
+    int diseaseFrequency = 0;
 
     if (iterator != NULL) {
         while(true) {
@@ -59,7 +60,10 @@ int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, in
                         break;
                     }
 
-                    printf("%s \n", msg);
+                    if (!strcmp(querie, "/diseaseFrequency"))
+                        diseaseFrequency =  diseaseFrequency + atoi(msg);
+                    else
+                        printf("%s \n", msg);
                     free(msg);
                 }
                 iterator = iterator->next;
@@ -72,8 +76,11 @@ int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, in
                     allReady = false;
                 iterator = iterator->next;
             }
-            if (allReady)
+            if (allReady) {
+                if (!strcmp(querie, "/diseaseFrequency"))
+                    printf("%d\n", diseaseFrequency);
                 return 0;
+            }
         }
     }
     else {
@@ -84,7 +91,6 @@ int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, in
             }
 
             if (!strcmp(msg, "finished!")) {
-                printf("epa8e trikimia %s \n", msg);
                 free(msg);
                 return 0;
             }
@@ -93,6 +99,7 @@ int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, in
             free(msg);
         }
     }
+
     return -1;
 }
 
@@ -114,12 +121,12 @@ int queriesHandler(workerInfoPtr workersList,const char* querie, int bufferSize)
     else if (!strcmp(p.we_wordv[0], "/diseaseFrequency")) {
         if (p.we_wordc == 4) {
             sendQuerie(workersList, querie, -1, bufferSize);
-            querieAnswer(workersList, querie, -1, bufferSize);
+            querieAnswer(workersList, p.we_wordv[0], -1, bufferSize);
         }
-        // else if (p.we_wordc == 5) {
-        //     //call selectworker
-        //     //callfunction
-        // }
+        else if (p.we_wordc == 5) {
+            sendQuerie(NULL, querie, selectWorker(workersList, p.we_wordv[4], "write"), bufferSize);
+            querieAnswer(NULL, p.we_wordv[0], selectWorker(workersList, p.we_wordv[4], "read"), bufferSize);
+        }
         else {
             printf("number of arguments is not right! \n");
             wordfree(&p);

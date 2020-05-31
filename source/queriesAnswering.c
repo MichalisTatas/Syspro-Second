@@ -12,7 +12,27 @@ int queriesAnswerer(const char* querie, int bufferSize, HashTablePtr countryHash
         msgDecomposer(writeDesc, "finished!", bufferSize);
     }
     else if (!strcmp(p.we_wordv[0], "/diseaseFrequency")) {
-        msgDecomposer(writeDesc, "/diseaseFrequency", bufferSize);
+        date1 = createDate(p.we_wordv[2]);
+        date2 = createDate(p.we_wordv[3]);
+        countryPtr countryGiven=NULL;
+        if (p.we_wordc == 4) {
+            countryGiven = countriesList;
+            while(countryGiven != NULL) {
+                char* msg = diseaseFrequency(diseaseHashTable, p.we_wordv[1], date1, date2, countryGiven);
+                msgDecomposer(writeDesc, msg, bufferSize);
+                free(msg);
+                countryGiven = countryGiven->next;
+            }
+        }
+        else if (p.we_wordc == 5) {                      //cahnges the if not problem i guess
+            addCountryInList(&countryGiven, p.we_wordv[4]);
+            char* msg = diseaseFrequency(diseaseHashTable, p.we_wordv[1], date1, date2, countryGiven);
+            msgDecomposer(writeDesc, msg, bufferSize);
+            free(msg);
+            destroyCountryList(countryGiven);
+        }
+        free(date1);
+        free(date2);
         msgDecomposer(writeDesc, "finished!", bufferSize);
     }
     else if (!strcmp(p.we_wordv[0], "/topk-AgeRanges")) {
@@ -35,25 +55,18 @@ int queriesAnswerer(const char* querie, int bufferSize, HashTablePtr countryHash
         if (p.we_wordc == 4) {
             countryGiven = countriesList;
             while(countryGiven != NULL) {
-                 char* msg = numPatientAdmissions(diseaseHashTable, countryGiven, p.we_wordv[1], date1, date2);
+                char* msg = numPatientAdmissions(diseaseHashTable, countryGiven, p.we_wordv[1], date1, date2);
                 msgDecomposer(writeDesc, msg, bufferSize);
                 free(msg);
                 countryGiven = countryGiven->next;
             }
         }
-        else if (p.we_wordc == 5) {
+        else if (p.we_wordc == 5) {                      //cahnges the if not problem i guess
             addCountryInList(&countryGiven, p.we_wordv[4]);
             char* msg = numPatientAdmissions(diseaseHashTable, countryGiven, p.we_wordv[1], date1, date2);
             msgDecomposer(writeDesc, msg, bufferSize);
             free(msg);
             destroyCountryList(countryGiven);
-        }
-        else {
-            printf("number of arguments is not right! \n");
-            free(date1);
-            free(date2);
-            wordfree(&p);
-            return -1;
         }
         free(date1);
         free(date2);
@@ -100,6 +113,45 @@ int queriesAnswerer(const char* querie, int bufferSize, HashTablePtr countryHash
 }
 
 
+char* diseaseFrequency(HashTablePtr diseaseHashTable, char* disease, datePtr date1, datePtr date2, countryPtr country)
+{
+    int bucketNum = hashFunction(disease);
+    int size = diseaseFrequencyHelper(diseaseHashTable->table[bucketNum]->tree, date1, date2, country->name);
+    char* buffer = malloc(12);
+    snprintf(buffer, 12, "%d\n", size);
+    return buffer;
+}
+
+int diseaseFrequencyHelper(treeNodePtr tree, datePtr date1, datePtr date2, char* country)
+{
+    if (tree == NULL)
+        return 0;
+
+    if (compareDates(tree->patient->entryDate, date1) == -1) {
+        diseaseFrequencyHelper(tree->right, date1, date2, country);
+    }
+    else if (compareDates(tree->patient->entryDate, date2) == 1) {
+        diseaseFrequencyHelper(tree->left, date1, date2,  country);
+    }
+
+    int count = 0;
+    patientPtr list;
+
+    if (!strcmp(tree->patient->country, country)) {
+        if ((compareDates(tree->patient->entryDate, date1) >= 0) && (compareDates(tree->patient->entryDate, date2) <=0)) {
+            list = tree->patient;  //searches the list of patients because some may not be in the tree bcz they have the same date
+            while (list != NULL && compareDates(list->entryDate, tree->patient->entryDate)==0){
+                count ++;
+                list = list->next;
+            }
+        }
+    }
+
+    count += (diseaseFrequencyHelper(tree->left, date1, date2, country) + diseaseFrequencyHelper(tree->right, date1, date2, country));
+
+    return count;
+}
+
 char* topkAgeRanges(int k, char* country, char* disease, datePtr date1, datePtr date2, HashTablePtr countryHashTable, HashTablePtr diseaseHashTable)
 {
     // needs binary heap opote epa8e trikimia pros to parwn
@@ -116,39 +168,6 @@ char* searchPatientRecord(char* recordId, patientPtr patientListHead)
         current = current->next;
     }
     return NULL;
-}
-
-char* numPatientAdmissions(HashTablePtr diseaseHashTable, countryPtr countries, char* disease, datePtr date1, datePtr date2) // if country argument given countries contains only that country
-{                                                                                             // otherwise every country the worker is handling
-    countryPtr current  = countries;
-    int bucketNum = hashFunction(disease);
-    int numPerCountry;
-
-    numPerCountry = numPatientAdmissionsHelper(current->name, disease, date1, date2, diseaseHashTable->table[bucketNum]->tree);
-    char buffer[4];
-    sprintf(buffer, "%d",numPerCountry);
-    char* msg = malloc(strlen(current->name) + strlen(buffer) + 2);
-    strcpy(msg, current->name);
-    strcat(msg, " ");
-    strcat(msg, buffer);
-    return msg;
-}
-
-
-char* numPatientDischarges(HashTablePtr diseaseHashTable, countryPtr countries, char* disease, datePtr date1, datePtr date2) // if country argument given countries contains only that country
-{                                                                                             // otherwise every country the worker is handling
-    countryPtr current  = countries;
-    int bucketNum = hashFunction(disease);
-    int numPerCountry;
-
-    numPerCountry = numPatientDischargesHelper(current->name, disease, date1, date2, diseaseHashTable->table[bucketNum]->tree);
-    char buffer[4];
-    sprintf(buffer, "%d",numPerCountry);
-    char* msg = malloc(strlen(current->name) + strlen(buffer) + 2);
-    strcpy(msg, current->name);
-    strcat(msg, " ");
-    strcat(msg, buffer);
-    return msg;
 }
 
 char* resynthesizePatient(patientPtr patient)
@@ -190,22 +209,38 @@ char* resynthesizePatient(patientPtr patient)
     return buffer;
 }
 
-int numPatientAdmissionsHelper(char* country, char* disease, datePtr date1, datePtr date2, treeNodePtr tree)
+char* numPatientAdmissions(HashTablePtr diseaseHashTable, countryPtr countries, char* disease, datePtr date1, datePtr date2) // if country argument given countries contains only that country
+{                                                                                             // otherwise every country the worker is handling
+    countryPtr current  = countries;
+    int bucketNum = hashFunction(disease);
+    int numPerCountry;
+
+    numPerCountry = numPatientAdmissionsHelper(current->name, date1, date2, diseaseHashTable->table[bucketNum]->tree);
+    char buffer[4];
+    sprintf(buffer, "%d",numPerCountry);
+    char* msg = malloc(strlen(current->name) + strlen(buffer) + 2);
+    strcpy(msg, current->name);
+    strcat(msg, " ");
+    strcat(msg, buffer);
+    return msg;
+}
+
+int numPatientAdmissionsHelper(char* country, datePtr date1, datePtr date2, treeNodePtr tree)
 {
     if (tree == NULL)
         return 0;
 
     if (compareDates(tree->patient->entryDate, date1) == -1) {
-        numPatientAdmissionsHelper(country, disease, date1, date2, tree->right);
+        numPatientAdmissionsHelper(country, date1, date2, tree->right);
     }
     else if (compareDates(tree->patient->entryDate, date2) == 1) {
-        numPatientAdmissionsHelper(country, disease, date1, date2, tree->left);
+        numPatientAdmissionsHelper(country, date1, date2, tree->left);
     }
 
     int count = 0;
     patientPtr list;
 
-    if (!strcmp(tree->patient->country, country)) {
+    if (!strcmp(tree->patient->country, country)) {              // does it need || NULL
         if ((compareDates(tree->patient->entryDate, date1) >= 0) && (compareDates(tree->patient->entryDate, date2) <=0)) {
             list = tree->patient;  //searches the list of patients because some may not be in the tree bcz they have the same date
             while (list != NULL && compareDates(list->entryDate, tree->patient->entryDate)==0){
@@ -215,11 +250,26 @@ int numPatientAdmissionsHelper(char* country, char* disease, datePtr date1, date
         }
     }
 
-    count += (numPatientAdmissionsHelper(country, disease, date1, date2, tree->left) + numPatientAdmissionsHelper(country, disease, date1, date2, tree->right));
+    count += (numPatientAdmissionsHelper(country, date1, date2, tree->left) + numPatientAdmissionsHelper(country, date1, date2, tree->right));
 
     return count;
 }
 
+char* numPatientDischarges(HashTablePtr diseaseHashTable, countryPtr countries, char* disease, datePtr date1, datePtr date2) // if country argument given countries contains only that country
+{                                                                                             // otherwise every country the worker is handling
+    countryPtr current  = countries;
+    int bucketNum = hashFunction(disease);
+    int numPerCountry;
+
+    numPerCountry = numPatientDischargesHelper(current->name, disease, date1, date2, diseaseHashTable->table[bucketNum]->tree);
+    char buffer[4];
+    sprintf(buffer, "%d",numPerCountry);
+    char* msg = malloc(strlen(current->name) + strlen(buffer) + 2);
+    strcpy(msg, current->name);
+    strcat(msg, " ");
+    strcat(msg, buffer);
+    return msg;
+}
 
 int numPatientDischargesHelper(char* country, char* disease, datePtr date1, datePtr date2, treeNodePtr tree)
 {
