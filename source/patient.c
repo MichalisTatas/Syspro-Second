@@ -31,26 +31,43 @@ datePtr createDate(const char* line)
     return dt;
 }
 
+bool canInsertPatient(patientPtr list, patientPtr patient)
+{
+    if (list == NULL) {
+        if (!strcmp(patient->action, "ENTER"))
+            return true;
+        return false;
+    }
 
-void replaceExitDate(patientPtr head, char* recordID, char* dt)
+    patientPtr temp = list;
+    while (temp!=NULL) {
+        if (!strcmp(temp->recordID, patient->recordID)) {
+            if (!strcmp(temp->action, "ENTER") && !strcmp(patient->action, "EXIT")) {
+                // if (compareDates(temp->entryDate, patient->exitDate) == -1)
+                    return true;
+            }
+            else
+                return false; 
+        }
+        temp=temp->next;
+    }
+
+    if (!strcmp(patient->action, "ENTER"))
+        return true;
+    else 
+        return false;
+}
+
+patientPtr replaceExitDate(patientPtr head, char* recordID, char* dt)
 {
     datePtr date;
-    if (strcmp(dt, "-"))
-        date = createDate(dt);
-    else 
-        date = NULL;
+    
+    date = createDate(dt);
     patientPtr temp = head;
-    while (temp->next != NULL){
+    while (temp != NULL){
         if (!strcmp(temp->recordID, recordID)) {
-            if (temp->exitDate == NULL) {
-                temp->exitDate = malloc(sizeof(date));
-                temp->exitDate = date;
-            }
-            else {
-                free(temp->exitDate);
-                temp->exitDate = date;
-            }
-            return;
+            temp->exitDate = date;
+            return head;
         }
         temp = temp->next;
     }
@@ -101,7 +118,6 @@ patientPtr patientListInsert(patientPtr head, patientPtr current)
             temp->next = current;
 
     }
-
     return head;
 }
 
@@ -157,9 +173,6 @@ patientPtr createPatientStruct(const char* line, char* country, char* date)
         perror("creating date failed");
         return NULL;
     }
-
-    // printf ("%d %d %d \n", current->entryDate->day, current->entryDate->month, current->entryDate->year);
-
     current->exitDate = NULL;
 
     current->next = NULL;

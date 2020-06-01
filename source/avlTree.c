@@ -6,6 +6,8 @@
 bool existInTree(treeNodePtr tree, patientPtr patient)
 {
     treeNodePtr temp = tree;
+    if (tree == NULL)
+        return false;
     while (temp != NULL) {
         if (compareDates(tree->patient->entryDate, patient->entryDate) == 1)
             temp = temp->left;

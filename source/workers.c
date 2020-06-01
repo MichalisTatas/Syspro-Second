@@ -13,6 +13,13 @@ int workersFunction(int bufferSize, char* inputDirectory)
     int pid = getpid();
     int readDesc, writeDesc;
     countryPtr countryList = NULL;
+    signal(SIGUSR1, handler);
+    struct sigaction sa;
+    sa.sa_flags = SA_SIGINFO;           // prob not needed
+    sigemptyset(&sa.sa_mask);           // prob not needed
+    sa.sa_sigaction = (void*)handler;
+    char* msg;
+
 
     if ((readDesc = createPipe("pipes/", pid, O_RDONLY,"P2C")) == -1) {  //P2C parent writes to child
         perror("createPipe failed");
@@ -22,13 +29,6 @@ int workersFunction(int bufferSize, char* inputDirectory)
         perror("createPipe failed");
         return -1;
     }
-
-    signal(SIGUSR1, handler);
-    struct sigaction sa;
-    sa.sa_flags = SA_SIGINFO;           // prob not needed
-    sigemptyset(&sa.sa_mask);           // prob not needed
-    sa.sa_sigaction = (void*)handler;
-    char* msg;
 
     while(true) {
 
@@ -71,6 +71,15 @@ int workersFunction(int bufferSize, char* inputDirectory)
         return -1;
     }
 
+    // patientPtr c = patientListHead;
+    // while(c!= NULL) {
+    //         printf("ENTER %d %d %d \n", c->entryDate->day, c->entryDate->month, c->entryDate->year);
+    //         if(c->exitDate != NULL)
+    //         printf("LOLOLOLOLOLLOLOLLLLLLLLLLLLLLOLOLOLOLLOLLO%d %d %d \n", c->exitDate->day, c->exitDate->month, c->exitDate->year);
+    //     c=c->next;
+    // }
+
+
     //finished filling data structures ready for queries
     if (msgDecomposer(writeDesc, "finished!", bufferSize) == -1) {
         perror("msgDecomposer failed");
@@ -96,7 +105,7 @@ int workersFunction(int bufferSize, char* inputDirectory)
     return 0;
 }
 
-int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashtable,countryPtr countryList, patientPtr* patientListHead,  char* inputDirectory)
+int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashtable, countryPtr countryList, patientPtr* patientListHead,  char* inputDirectory)
 {
     // open each country file and fill the needed data structures
     DIR* countryDir;
@@ -124,8 +133,8 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
         while ((d = readdir(countryDir)) != NULL) {
             if ( !strcmp(d->d_name, ".") || !strcmp(d->d_name, "..") )
                 continue;
-            if (addCountryInList(&dateList, d->d_name) == -1) {
-                perror("addCountryInList failed");
+            if ((dateList = sortedAddDateInList(dateList, d->d_name)) == NULL) {
+                perror("sortedAddDateInList failed");
                 return -1;
             }
         }
@@ -151,17 +160,28 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
                     perror("createPatientStruct failed");
                     return -1;
                 }
-                *patientListHead = patientListInsert(*patientListHead, currentPatient);
-                if (HTInsert(*diseaseHashtable, currentPatient->diseaseID, currentPatient) == -1) {
-                    perror("HTInsert failed");
-                    return -1;
+                if (canInsertPatient(*patientListHead, currentPatient)) {
+                    if(!strcmp(currentPatient->action, "ENTER")) {
+                        *patientListHead = patientListInsert(*patientListHead, currentPatient);
+                        if (HTInsert(*diseaseHashtable, currentPatient->diseaseID, currentPatient) == -1) {
+                        perror("HTInsert failed");
+                        return -1;
+                        }
+                        if (HTInsert(*countryHashtable, currentPatient->country, currentPatient) == -1) {
+                            perror("HTInsert failed");
+                            return -1;
+                        }
+                    }
+                    else {
+                        *patientListHead = replaceExitDate(*patientListHead, currentPatient->recordID, date->name);
+                        destroyPatientList(currentPatient);
+                    }
+                    
                 }
-                if (HTInsert(*countryHashtable, currentPatient->country, currentPatient) == -1) {
-                    perror("HTInsert failed");
-                    return -1;
-                }
+                else
+                    destroyPatientList(currentPatient);
             }
-            
+
             if (fclose(filePtr) == EOF) {
                 perror("fclose failed");
                 return -1;
@@ -169,6 +189,7 @@ int setDataStructures(HashTablePtr* diseaseHashtable,HashTablePtr* countryHashta
             free(datePath);
             date = date->next;
         }
+
         if (closedir(countryDir) == -1) {
             perror("closedir failed!");
             return -1;

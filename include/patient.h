@@ -1,5 +1,6 @@
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdbool.h>
 #pragma once
 
 typedef struct date
@@ -25,8 +26,9 @@ typedef struct patient{
 typedef patient* patientPtr;
 
 datePtr createDate(const char*);
-void replaceExitDate(patientPtr, char*, char*);
+patientPtr replaceExitDate(patientPtr, char*, char*);
 patientPtr patientListInsert(patientPtr, patientPtr);
+bool canInsertPatient(patientPtr, patientPtr);
 int compareDates(datePtr, datePtr);
 patientPtr createPatientStruct(const char*, char*, char*);
 void destroyPatientList(patientPtr);

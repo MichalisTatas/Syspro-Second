@@ -26,6 +26,8 @@ typedef workerInfo* workerInfoPtr;
 
 workerInfoPtr addPidInList(workerInfoPtr, int);
 int addCountryInList(countryPtr*, char*);
+countryPtr sortedAddDateInList(countryPtr, const char*);
 countryPtr addDateAndSort(countryPtr, char*);
+bool existIn(patientPtr, patientPtr);
 void destroyCountryList(countryPtr);
 void destroyList(workerInfoPtr);

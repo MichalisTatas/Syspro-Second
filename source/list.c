@@ -26,12 +26,6 @@ workerInfoPtr addPidInList(workerInfoPtr head, int pid)
     return head;
 }
 
-// countryPtr addDateAndSort(countryPtr head, char* date)
-// {
-//     datePtr toBeInserted = createDate(date);
-
-// }
-
 int addCountryInList(countryPtr* head, char* countryName)
 {
     countryPtr cntry;
@@ -49,6 +43,70 @@ int addCountryInList(countryPtr* head, char* countryName)
     *head = cntry;
     return 0;
 }
+
+countryPtr sortedAddDateInList(countryPtr date, const char* dateString)
+{
+    countryPtr toBeInserted;
+    if ((toBeInserted = malloc(sizeof(country))) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    if ((toBeInserted->name = malloc(strlen(dateString) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    strcpy(toBeInserted->name, dateString);
+    toBeInserted->next = NULL;
+
+
+    if (date == NULL) {
+        date = toBeInserted;
+        return date;
+    }
+    else {
+        countryPtr fastPtr, slowPtr;
+        datePtr dateToBeInserted = createDate(dateString);
+        fastPtr = date;
+        datePtr fastDate;
+        if (compareDates((fastDate = createDate(fastPtr->name)), dateToBeInserted) >= 0) {
+            toBeInserted->next = date;
+            date = toBeInserted;
+            free(fastDate);
+            free(dateToBeInserted);
+            return date;
+        }
+        free(fastDate);
+
+        while ((fastPtr!= NULL)) {
+            if (compareDates((fastDate = createDate(fastPtr->name)), dateToBeInserted) >= 0) {
+                free(fastDate);
+                break;
+            }
+            free(fastDate);
+            slowPtr = fastPtr;
+            fastPtr = fastPtr->next;
+        }
+        free(dateToBeInserted);
+        slowPtr->next = toBeInserted;
+        toBeInserted->next = fastPtr;
+    }
+    return date;
+}
+
+bool existIn(patientPtr list, patientPtr patient)
+{
+    if (list == NULL)
+        return false;
+
+    patientPtr temp = list;
+    while (temp!=NULL) {
+        if (strcmp(temp->recordID, patient->recordID) == 0)
+            return true;
+        temp=temp->next;
+    }
+    return false;
+}
+
 
 void destroyCountryList(countryPtr head)
 {
