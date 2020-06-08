@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h> 
 #include <signal.h>
+#include <errno.h>
 
 #include "list.h"
 #include "hashTable.h"
@@ -15,4 +16,12 @@
 
 
 int workersFunction(int, char*);
-int setDataStructures(HashTablePtr*,HashTablePtr*, countryPtr, patientPtr*, char*);
+countryPtr setDataStructures(HashTablePtr*, countryPtr, patientPtr*, char*, int, int);
+countryPtr setNewDataStructures(HashTablePtr*, countryPtr, countryPtr, patientPtr*,char*);
+void updateStatistics(countryPtr, patientPtr, char*, char*);
+int createLogFile(int, countryPtr, int);
+void freeDataStructures(HashTablePtr*, countryPtr*, countryPtr*, patientPtr*);
+
+
+statisticDataPtr addDataStatistics(statisticDataPtr dataStatisticsNode, patientPtr currentPatient);
+int sendStatistics(statisticDataPtr head, char* country, char* date, int, int);

@@ -41,6 +41,28 @@ int createPipe(char* path, int pid, int flags, char* ending)
     return fileDesc;
 }
 
+int closePipe(char* path, int pid, char* ending)
+{
+    char buffer[12];
+    if (sprintf(buffer, "%d", pid) <= 0) {
+        perror("sprintf failed!");
+        return -1;
+    }
+
+    char* pipeName;
+    if ((pipeName = malloc(strlen(buffer) + strlen(path) + 4)) == NULL) {
+        perror("malloc failed!");
+        return -1;
+    }
+
+    strcpy(pipeName, path);
+    strcat(pipeName, ending);
+    strcat(pipeName, buffer);
+
+    unlink(pipeName);
+    free(pipeName);
+    return 0;
+}
 
 int msgDecomposer(int fileDescriptor, char* msg, int bufferSize)
 {

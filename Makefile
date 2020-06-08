@@ -7,13 +7,14 @@ ODIR = build
 IDIR = include
 SDIR = source
 PDIR = pipes
+LDIR = log_files
 
 EXECUTABLE = diseaseAggregator
 
-_DEPS = pipes.h diseaseAggregator.h workers.h list.h patient.h hashTable.h avlTree.h queriesHandling.h queriesAnswering.h queue.h binaryHeap.h
+_DEPS = pipes.h diseaseAggregator.h workers.h list.h patient.h hashTable.h avlTree.h queriesHandling.h queriesAnswering.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o pipes.o workers.o diseaseAggregator.o list.o patient.o hashTable.o avlTree.o queriesHandling.o queriesAnswering.o queue.o binaryHeap.o
+_OBJ = main.o pipes.o workers.o diseaseAggregator.o list.o patient.o hashTable.o avlTree.o queriesHandling.o queriesAnswering.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
@@ -32,5 +33,7 @@ valgrind:
 
 clean:
 	rm -f $(ODIR)/*.o
+	rm -f $(LDIR)/*
 	rm diseaseAggregator
-	rm -rf $(PDIR)/*
+	rm statistics.txt
+	rm newStatistics.txt

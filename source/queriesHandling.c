@@ -1,6 +1,5 @@
 #include "../include/queriesHandling.h"
 
-
 void sendQuerie(workerInfoPtr workersList, const char* querie, int writeDesc, int bufferSize)
 {
     char* temp = malloc(strlen(querie) + 1);
@@ -19,11 +18,15 @@ void sendQuerie(workerInfoPtr workersList, const char* querie, int writeDesc, in
     free(temp);
 }
 
-
 int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, int bufferSize)
 {
-    // check query and if diseaseFrequency then add answers then print so one more case
+    sigset_t emptyset, blockset;
     fd_set readfds;
+    sigemptyset(&blockset);
+    sigaddset(&blockset, SIGUSR1);
+    sigaddset(&blockset, SIGINT);
+    sigaddset(&blockset, SIGQUIT);
+    sigprocmask(SIG_BLOCK, &blockset, NULL);
     char* msg;
     workerInfoPtr iterator = workersList;
     int diseaseFrequency = 0;
@@ -40,9 +43,12 @@ int querieAnswer(workerInfoPtr workersList, const char* querie, int readDesc, in
                 iterator = iterator->next;
             }
 
-            if (pselect(max + 1, &readfds, NULL, NULL, NULL, NULL) == -1) {
-                perror("pselect failed!");
-                return -1;
+            sigemptyset(&emptyset);
+            if (pselect(max + 1, &readfds, NULL, NULL, NULL, &emptyset) == -1) {
+                if (errno != EINTR) {
+                    perror("pselect failed!");
+                    return -1;
+                }
             }
 
             iterator = workersList;
@@ -114,8 +120,6 @@ int queriesHandler(workerInfoPtr workersList,const char* querie, int bufferSize)
             wordfree(&p);
             return -1;
         }
-        // sendQuerie(workersList, querie, -1, bufferSize);
-        // querieAnswer(workersList,-1, bufferSize);
         listCountriesFunction(workersList);
     }
     else if (!strcmp(p.we_wordv[0], "/diseaseFrequency")) {
@@ -135,8 +139,8 @@ int queriesHandler(workerInfoPtr workersList,const char* querie, int bufferSize)
     }
     else if (!strcmp(p.we_wordv[0], "/topk-AgeRanges")) {
         if (p.we_wordc == 6) {
-            sendQuerie(workersList, querie, -1, bufferSize);
-            querieAnswer(workersList, querie, -1, bufferSize);
+            sendQuerie(NULL, querie, selectWorker(workersList, p.we_wordv[2], "write"), bufferSize);
+            querieAnswer(NULL, querie, selectWorker(workersList, p.we_wordv[2], "read"), bufferSize);
         }
         else {
             printf("number of arguments is not right! \n");
@@ -199,7 +203,6 @@ int queriesHandler(workerInfoPtr workersList,const char* querie, int bufferSize)
     else {
         printf("wrong querie ! \n");
         wordfree(&p);
-        return -1;
     }
 
     wordfree(&p);

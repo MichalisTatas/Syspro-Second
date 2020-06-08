@@ -71,6 +71,7 @@ patientPtr replaceExitDate(patientPtr head, char* recordID, char* dt)
         }
         temp = temp->next;
     }
+    return head;
 }
 
 int compareDates(datePtr date1, datePtr date2)

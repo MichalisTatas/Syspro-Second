@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h> 
 #include <sys/select.h>
+#include <errno.h>
 
 #include "pipes.h"
 #include "workers.h"
@@ -15,6 +16,9 @@
 
 int forkAssignFunctionality(int, int, char*);
 int diseaseAggregator(workerInfoPtr, int, int, char*);
+workerInfoPtr handleChildDeath(workerInfoPtr, int, char*);
+void parentSIGINThandler(workerInfoPtr);
+void parentSIGQUIThandler(workerInfoPtr);
 int distributeCountries(workerInfoPtr*, int, int, char*);
 bool areWorkersReady(workerInfoPtr*, int);
 int countriesNumber(char*);

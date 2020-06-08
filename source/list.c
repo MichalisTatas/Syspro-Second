@@ -38,6 +38,7 @@ int addCountryInList(countryPtr* head, char* countryName)
         return -1;
     }
     strcpy(cntry->name, countryName);
+    // cntry->statistics = NULL;
 
     cntry->next = *head;
     *head = cntry;
@@ -57,7 +58,7 @@ countryPtr sortedAddDateInList(countryPtr date, const char* dateString)
     }
     strcpy(toBeInserted->name, dateString);
     toBeInserted->next = NULL;
-
+    // toBeInserted->statistics = NULL;
 
     if (date == NULL) {
         date = toBeInserted;
@@ -107,12 +108,32 @@ bool existIn(patientPtr list, patientPtr patient)
     return false;
 }
 
+void freeDataStatistics(statisticDataPtr head)
+{
+    if (head == NULL)
+        return;
+    freeDataStatistics(head->next);
+    free(head->disease);
+    free(head);
+}
+
+void freeDateStatistics(statisticsNodePtr head)
+{
+    if (head == NULL)
+        return;
+    freeDateStatistics(head->next);
+    freeDataStatistics(head->data);
+    free(head->dateString);
+    free(head);
+}
 
 void destroyCountryList(countryPtr head)
 {
     if (head == NULL)
         return;
     destroyCountryList(head->next);
+    // if (head->statistics != NULL)
+    //     freeDateStatistics(head->statistics);
     free(head->name);
     free(head);
 }

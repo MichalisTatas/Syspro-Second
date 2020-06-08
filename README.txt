@@ -1,49 +1,61 @@
+Μιχαήλ Τατάς
+sdi1700161
+Χιλια συγγνωμη για την απουσια τονων αλλα δυστυχως δεν προλαβαινω
+Το πρόγραμμα μεταγλωτίζεται με την εντολή make και τρέχει με την εντολή make run και
+καθαρίζει άχρηστα αρχεί πχ log files με την εντολή make clean.
+Υπαρει η επιλογη επισης να τρεξει το προγραμμα με την εντολη make valgrind για αν ελεχθουν
+τυχον memory leaks
+Το προγραμμα αρχιζει στην main οπου καλειται η συναρτηση forkAssignFunctionality.
+Σε αυτη τη συναρτηση γινονται fork οι workers και τους ανατιθεται η δουλεια τους δηλαδη η
+workersFunction ενω ο πατερας οταν τελειωσει με τα forks αρχιζει να τρεχει την
+diseaseAggragator.
+Ολες οι συναρτησεις που αφορουν την πατρικη διαδικασια βρισκονται στο αρχειο
+diseaseAggregator.c , ενω οι συναρτησεις για τα ερωτηματα απο την πλευρα του πατερα
+διαχειριζονται στο αρχειο queriesHandling.c
+Αντιστοιχα οι συναρτησεις των workers βρισκονται στο αρχειο workers.c , ενω τα ερωτηματα απο
+πλευρας των worker στο αρχειο queriesAnswering.c
+Αρχικα πριν την περιγραφη του προγραμματος να τονισω οτι το πρωτοκολλο επικοινωνιας ειναι
+αρκετα βασικα, δηλαδη απλα στην αρχη του μηνυματος στελνω το μεγεθος του μηνυματος
+τηρωντας παντα το μεγιστο οριο του bufferSize ενω το προγραμμα δουλευει με οποιοδηποτε
+bufferSize
+Ο πατερας η οι workers οποιος προλαβρει καθε φορα με την δημιουργια τους ανοιγουν τα named
+pipes
+Υστερα πατερας στελνει στους workers τις χωρες-ονοματα αρχειων που θα αναλαβουν και αυτοι
+στην συνεχεια γεμιζουν ολες τις δομες που χρειαζονται για να απαντησουν τα ερωτηματα και οταν
+τελειωσουν με την διαδικασια αυτη στελνουν ενα προκαθορισμενο μηνυμα στον πατερα με το
+οποιο τον ενημερωνουν οτι μπορουν να δεχθουν queries και ο πατερας οταν ειναι ολοι οι workers
+ετοιμοι αρχιζει να αναμενει για εισοδο απο το χρηστη.
+Ολες οι εγγραφες που μπαινουν στιε δομες ειναι valid καθως υπαρχει ελεγχος
+Οσο οι workers διαβαζουν τα αρχεια για καθε ημερομηνια στελνουν στατιστικα στον πατερα τα
+οποια ανακατευθυνονται στο αρχειo statistics.txt
+Οι δομες που εχουν επιλεχθει ειναι αυτες που χρησιμοποιηθηκαν και στην πρωτα εργασια κωριως
+με τηνα αφαιρεση του countryHashTable διοτι δεν χρειαζεται αφου τα ερωτηματα που χρειαζονται
+hash table εχουν κλειδι disease στα ορισματα τους.
+Ο πατερας κραταει μονο μια λιστα η οποια περιεχει πληροφοριες για ολους τους workers πως το id
+τους, το read descriptor , τον write descriptor , τις χωρες που διαχειριζεται το καθε παιδι
+Ο πατερας προωθει ολα τα ερωτηματα στα παιδια εκτος του /listCountries , διοτι αυτο το
+διαχειριζεται ο ιδιος καθως διαθετει ολη την πληροφορια
+Με την συναρτηση sendQuerie ο πατερας προωθει το ερωτημα σε ολα τα παιδια η σε ενα
+συγεκριμενο παιδι αν εχει δωθει το ορισμα [country] ενω με την querieAnswer μαζευει τα
+αποτελεσματα απο τους workers και τα εκτυπωνει
+Το παιδι σε καθε ερωτημα οταν σταματαει να στελνει πληροφοριες στελνει μηνυμα finished! Ωστε
+να το γνωριζει ο πατερας
 
-IF TIME REMAINING THEN PUT DATA STRUCTURES IN THEIR WON DIRECTORY
+Προς ολα τα ερωτηματα με προαιρετικο ορισμα country, αν δεν δωθει το ορισμα το ερωτημα
+προωθειται σε ολους τους workers ενω αν δωθει πρωοθειται μονο στον worker , στον οποιο εχει
+ανατεθει η χωρα , τον οποιο εντοπιζω απο τη λιστα με τα δεδομενα για τους worker στον πατερα
+ενω υπαρχουν και συνθηκες στις συναρτησεις που μετρανε αν εχει δωθει το ορισμα country να το
+χρησιμοποιησουν περιοριζοντας την αναζητηση τους μονο σε αυτη τη χωρα
+Τα ερωτηματα ειναι σχεδον ολα απλες αναζητησεις οποτε δεν θα ηθελα να τα εξηγησω αναλυτικα
+και κανω εξουθενωτικο το κειμενο αυτο μιας και δεν ειναι το βασικο νοημα της εργασιας
+Το προγραμμα δεν παρουσιαζει memory leaks σε κανενα ερωτημα
+Οσον αφορα τα σηματα τα παιδια διαχειριζονται ολα τα σηματα με την αναμενομενη
+συμπεριφορα , δηλαδη εκτυπωνουν τα log file οταν τερματιζουν απελευθερωνουν την μνημη τους
+κτλ.
+Επιπλεον με τη σημα sigusr1 γινεται ελεχγος για ολες τις εγγραφες αν ειναι valid
+Επιπλεον απο την πλευρα του πατερα υπαρχει επισης αναμενομενη συμπεριφορα τερματιζωντας
+ολα τα παιδια αν δεχθει sigint sigquit ενω αν ενα παιδι δεχθει τετοιο σημα στελνεται σημα στον
+πατερα sigchld και αυτος το διαχειριζεται αναλογως δημιουργωντας νεο worker στην θεση του και
+αναθετωντας του την δουλεια του worker ου τερματισε
 
-
-******************IMPORTANT CHANGE BASHSCRIPT*******************
-need to change bashscripot dir and use path not hardcoded
-xanw mia xwra sto bash script
-
-
-
-
-REHASH REHASH REHASH REHASH REHASH REHASH REHASH REHASH REHASH REHASH REHASH REHASH REASHR REHASH REHASH
-
-
-signals otan dinei kainourgia arxiea na elagxw an o patiennt idi mesa prin ton balw ton mpastardako
-
-
-
-
-Done :
-	-created processes
-	-created pipes
-	-catch signals
-	-added error handling to every function
-	-finished /searchPatientRecord
-	-check if patient already in
-
-To Do :
-	-CHECK BASH SCRIPT IN LINUX UNIVERSITY
-	-every worker read files in chronological order
-	-check spritnf in resynthesize why wokrs
-	-check numPatients wtf code
-	-check avl tree
-	-handle the signals
-	-close pipes from inside the program
-	-check if wrong input what happens before seg not know if due to that
-
-
-	today:
-		-check the statistics
-		-one querie to go
-		-script name random length adn id ++
-
-to check:
-	-insted of sprintf use snprintf just malloc the god damn size
-	-think that countryHT is kinda useless dont need it anywhere doesnt offer better complexity
-
-???
-pernaw input_dir/ is it ok?
+

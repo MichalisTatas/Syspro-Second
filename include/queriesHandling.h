@@ -1,5 +1,9 @@
 #include <wordexp.h>
 #include <sys/select.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <sys/resource.h>
+#include <errno.h>
 
 
 #include "list.h"
